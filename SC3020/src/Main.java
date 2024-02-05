@@ -3,12 +3,15 @@ import Records.RecordData;
 import Records.RecordHeader;
 import Utils.DateConverter;
 import Utils.IntConverter;
+import Utils.TsvReader;
 
 public class Main {
     public static void main(String[] args) {
         testRecord();
         testBlockFull();
         testBlockDelnInsert();
+
+        TsvReader.TsvToStringArray("data.tsv").get(0).printRecord();
     }
 
     static Record record;
@@ -16,10 +19,7 @@ public class Main {
     public static void testRecord()
     {
         record = new Record(new RecordHeader(0) , new RecordData("tt0000001" , 5.6f,	1645));
-
-        System.out.println("Record pointer : " + record.getRecordHeader().getRecordPointer() +
-                        "\nRecord timestamp : " + DateConverter.DateFromByte3(record.getRecordHeader().getTimeStamp())  +
-                        "\nRecord Data : " + new String(record.getRecordData().gettConst()) + "\n" + record.getRecordData().getAverageRating() + "\n" + IntConverter.ByteToInt(record.getRecordData().getNumVotes())  );
+        record.printRecord();
     }
 
     public static void testBlockFull()

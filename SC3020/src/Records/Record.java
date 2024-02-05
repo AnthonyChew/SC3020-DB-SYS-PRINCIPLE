@@ -1,5 +1,8 @@
 package Records;
 
+import Utils.DateConverter;
+import Utils.IntConverter;
+
 /*
 Record includes [7 byte record header][23 byte record data]
 
@@ -22,5 +25,14 @@ public class Record {
     public Record(RecordHeader recordHeader, RecordData recordData) {
         this.recordHeader = recordHeader;
         this.recordData = recordData;
+    }
+
+    public void printRecord()
+    {
+        System.out.println("Record pointer : " + this.getRecordHeader().getRecordPointer() +
+                "\nRecord timestamp : " + DateConverter.DateFromByte3(this.getRecordHeader().getTimeStamp())  +
+                "\nRecord Data : " + new String(this.getRecordData().gettConst()) + "\n" +
+                this.getRecordData().getAverageRating() + "\n" +
+                IntConverter.ByteToInt(this.getRecordData().getNumVotes())  );
     }
 }
