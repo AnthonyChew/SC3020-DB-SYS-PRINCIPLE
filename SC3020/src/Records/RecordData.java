@@ -5,14 +5,15 @@ import Utils.IntConverter;
 import java.nio.ByteBuffer;
 
 public class RecordData {
-    private char[] tConst; //18 bytes
-    private byte averageRating;//1 byte
-    private byte[] numVotes;//4 bytes
+    private char[] tConst; // 9 characters x 2 bytes -> 18 bytes
+    private byte averageRating; // 1 byte
+    private byte[] numVotes; // 4 bytes
 
-    //Getter
+    // Getter
     public char[] gettConst() {
         return tConst;
     }
+
     public void settConst(char[] tConst) {
         this.tConst = tConst;
     }
@@ -25,10 +26,10 @@ public class RecordData {
         return numVotes;
     }
 
-    //Constructor
+    // Constructor
     public RecordData(String tConst, float averageRating, int numVotes) {
         this.tConst = tConst.toCharArray();
-        this.averageRating = (byte)((int)(averageRating * 10)) ;
-        this.numVotes = IntConverter.IntToByte(numVotes,4);
+        this.averageRating = (byte) ((int) (averageRating * 10));
+        this.numVotes = IntConverter.IntToByte(numVotes, 4);
     }
 }

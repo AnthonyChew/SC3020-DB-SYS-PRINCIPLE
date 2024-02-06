@@ -1,10 +1,11 @@
 package Records;
+
 import Utils.DateConverter;
 
 import java.util.Date;
 
 public class RecordHeader {
-    private int recordPointer; //4 bytes
+    private int recordPointer; // 4 bytes
     private byte[] timeStamp; // 3 bytes
 
     public int getRecordPointer() {

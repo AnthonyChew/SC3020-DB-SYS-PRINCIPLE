@@ -1,15 +1,14 @@
 import Records.Record;
 
 public class Block {
-    public static final int BlockSize = 200; // 200 bytes block size
-    public static final int RecordSize = 20; // 20 bytes record size
-    public static final int MaxNumRecords = BlockSize / RecordSize;
+    public static final int BLOCK_SIZE = 200; // 200 bytes block size
+    public static final int RECORD_SIZE = 20; // 20 bytes record size
+    public static final int MAX_NUM_RECORDS = BLOCK_SIZE / RECORD_SIZE;
     private Record[] records;
     private byte emptyIndex = 0;
-
     private byte prevIndex = 0;
 
-    //Getter
+    // Getter
     public Record[] getRecords() {
         return records;
     }
@@ -23,16 +22,16 @@ public class Block {
     }
 
     /*
-    Constructor point current empty slot to first
-    Generate all empty records
-    */
+     * Constructor point current empty slot to first
+     * Generate all empty records
+     */
     public Block() {
         emptyIndex = 0;
-        records = new Record[MaxNumRecords];
+        records = new Record[MAX_NUM_RECORDS];
     }
 
     public Address addRecord(Record record) {
-        int offset = emptyIndex > MaxNumRecords ? emptyIndex = MaxNumRecords : emptyIndex;
+        int offset = emptyIndex > MAX_NUM_RECORDS ? emptyIndex = MAX_NUM_RECORDS : emptyIndex;
 
         if (emptyIndex == prevIndex) {
             records[offset] = record;
@@ -48,7 +47,7 @@ public class Block {
     }
 
     public boolean deleteRecord(int index) {
-        if (index < MaxNumRecords) {
+        if (index < MAX_NUM_RECORDS) {
             emptyIndex = (byte) index;
             return true;
         } else {
@@ -57,7 +56,7 @@ public class Block {
     }
 
     public boolean isFull() {
-        return emptyIndex >= MaxNumRecords;
+        return emptyIndex >= MAX_NUM_RECORDS;
     }
 
     public boolean isEmpty() {
