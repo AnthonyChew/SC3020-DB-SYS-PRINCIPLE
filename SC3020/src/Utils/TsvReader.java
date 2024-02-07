@@ -21,8 +21,12 @@ public class TsvReader {
                 if (index != 0) {
                     String[] lineItems = line.split("\t");
 
+<<<<<<< Updated upstream
                     Record record = new Record(new RecordHeader(index), new RecordData(lineItems[0],
                             Float.parseFloat(lineItems[1]), Integer.parseInt(lineItems[2])));
+=======
+                    Record record = new Record(new RecordHeader(index,null), new RecordData(lineItems[0], Float.parseFloat(lineItems[1]), Integer.parseInt(lineItems[2])));
+>>>>>>> Stashed changes
 
                     Data.add(record); // add to Data
                 }
