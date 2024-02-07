@@ -1,7 +1,5 @@
 import Records.Record;
 
-import java.util.ArrayList;
-
 
 public class Disk {
     private static final int DiskSize = 100;
@@ -20,7 +18,7 @@ public class Disk {
         blocks = new Block[MaxBlock];
     }
 
-    public Address addRecord(Record record)
+    public BlockHeader addRecord(Record record)
     {
         if(currIndex > MaxBlock)
         {
@@ -40,11 +38,11 @@ public class Disk {
         }
     }
 
-    public boolean deleteRecord(Address address)
+    public boolean deleteRecord(BlockHeader blockHeader)
     {
-        Block block = address.getBlock();
+        Block block = blockHeader.getBlock();
 
-        if(block.deleteRecord(address.getIndex() - 1))
+        if(block.deleteRecord(blockHeader.getIndex() - 1))
         {
             if(block.getCurrIndex() < getBlockCount() )
             {

@@ -26,7 +26,7 @@ public class Block {
         records = new Record[MaxNumRecords];
     }
 
-    public Address addRecord(Record record) {
+    public BlockHeader addRecord(Record record) {
 
         if (currIndex < MaxNumRecords) {
             records[currIndex] = record;
@@ -35,7 +35,7 @@ public class Block {
             records[currIndex] = record;
         }
 
-        return new Address(this, currIndex);
+        return new BlockHeader(this, currIndex);
     }
 
     public boolean deleteRecord(int index) {
