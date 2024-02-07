@@ -29,9 +29,9 @@ public class Record {
 
     public void printRecord() {
         System.out.println("Record pointer : " + this.getRecordHeader().getRecordPointer() +
-                "\nRecord timestamp : " + DateConverter.DateFromByte3(this.getRecordHeader().getTimeStamp()) +
+                "\nRecord timestamp : " + this.getRecordHeader().getTimeStamp().toString() +
                 "\nRecord Data : " + new String(this.getRecordData().gettConst()) + "\n" +
                 this.getRecordData().getAverageRating() + "\n" +
-                IntConverter.ByteToInt(this.getRecordData().getNumVotes())  + "\n");
+                this.getRecordData().getNumVotes()  + "\n");
     }
 }

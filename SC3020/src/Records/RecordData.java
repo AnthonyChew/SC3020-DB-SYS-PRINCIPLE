@@ -6,8 +6,8 @@ import java.nio.ByteBuffer;
 
 public class RecordData {
     private char[] tConst; //18 bytes
-    private byte averageRating;//1 byte //change to float
-    private byte[] numVotes;//4 bytes
+    private float averageRating;//1 byte //change to float
+    private int numVotes;//4 bytes
 
     // Getter
     public char[] gettConst() {
@@ -18,18 +18,18 @@ public class RecordData {
         this.tConst = tConst;
     }
 
-    public byte getAverageRating() {
+    public float getAverageRating() {
         return averageRating;
     }
 
-    public byte[] getNumVotes() {
+    public int getNumVotes() {
         return numVotes;
     }
 
     // Constructor
     public RecordData(String tConst, float averageRating, int numVotes) {
         this.tConst = tConst.toCharArray();
-        this.averageRating = (byte) ((int) (averageRating * 10));
-        this.numVotes = IntConverter.IntToByte(numVotes, 4);
+        this.averageRating = averageRating;
+        this.numVotes = numVotes;
     }
 }
