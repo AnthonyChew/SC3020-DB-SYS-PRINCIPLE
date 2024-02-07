@@ -5,8 +5,8 @@ import java.util.Date;
 
 public class DateConverter {
     private static final int YearBase = 2000;
-    public static byte[] DateToByte3(Date uDate)
-    {
+
+    public static byte[] DateToByte3(Date uDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(uDate);
 
@@ -28,8 +28,7 @@ public class DateConverter {
         return dateBytes;
     }
 
-    public static Date DateFromByte3(byte[] uDate)
-    {
+    public static Date DateFromByte3(byte[] uDate) {
         int decodedDate = ((uDate[0] & 0xFF) << 16) | ((uDate[1] & 0xFF) << 8) | (uDate[2] & 0xFF);
         int decodedYear = (decodedDate >> 10) + YearBase;
         int decodedMonth = (decodedDate >> 6) & 0x0F;

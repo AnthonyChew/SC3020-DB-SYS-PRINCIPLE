@@ -1,55 +1,50 @@
 import Records.Record;
 
+
 public class Block {
     public static final int BlockSize = 200; // 200 bytes block size
-    public static final int RecordSize = 20; // 20 bytes record size
+    public static final int RecordSize = 30; // 30 bytes record size
     public static final int MaxNumRecords = BlockSize / RecordSize;
     private Record[] records;
-    private byte emptyIndex = 0;
+    private byte currIndex = 0;
 
-    private byte prevIndex = 0;
-
-    //Getter
+    // Getter
     public Record[] getRecords() {
         return records;
     }
 
-    public byte getEmptyIndex() {
-        return emptyIndex;
-    }
-
-    public byte getPrevIndex() {
-        return prevIndex;
+    public byte getCurrIndex() {
+        return currIndex;
     }
 
     /*
-    Constructor point current empty slot to first
-    Generate all empty records
-    */
+     * Constructor point current empty slot to first
+     * Generate all empty records
+     */
     public Block() {
-        emptyIndex = 0;
+        currIndex = 0;
         records = new Record[MaxNumRecords];
     }
 
     public Address addRecord(Record record) {
-        int offset = emptyIndex > MaxNumRecords ? emptyIndex = MaxNumRecords : emptyIndex;
 
-        if (emptyIndex == prevIndex) {
-            records[offset] = record;
-            emptyIndex++;
+        if (currIndex < MaxNumRecords) {
+            records[currIndex] = record;
+            currIndex++;
         } else {
-            records[emptyIndex] = record;
-            emptyIndex = prevIndex;
+            records[currIndex] = record;
         }
 
-        prevIndex = emptyIndex;
-
-        return new Address(this, offset);
+        return new Address(this, currIndex);
     }
 
     public boolean deleteRecord(int index) {
         if (index < MaxNumRecords) {
-            emptyIndex = (byte) index;
+            //Reduce curr index - 1 since will be compressed
+            currIndex--;
+
+            //Compress func
+            compress(index);
             return true;
         } else {
             return false;
@@ -57,10 +52,24 @@ public class Block {
     }
 
     public boolean isFull() {
-        return emptyIndex >= MaxNumRecords;
+        return currIndex >= MaxNumRecords;
     }
 
     public boolean isEmpty() {
-        return emptyIndex == 0;
+        return currIndex == 0;
+    }
+
+    public void compress(int index) {
+        //Create new array
+        Record[] recordArray = new Record[MaxNumRecords];
+
+        //Copy unmoved slot
+        if (index > 0) System.arraycopy(records, 0, recordArray, 0, index);
+
+        //Copy moved slot
+        if (index + 1 < MaxNumRecords) System.arraycopy(records, index + 1, recordArray, index, records.length - index - 1);
+
+        //Update records to new array
+        records = recordArray;
     }
 }
