@@ -25,19 +25,6 @@ public class Main {
     }
 
     static Record record;
-<<<<<<< Updated upstream
-    static Block block = new Block();;
-
-    public static void testRecord() {
-        record = new Record(new RecordHeader(0), new RecordData("tt0000001", 5.6f, 1645));
-        record.printRecord();
-    }
-
-    public static void testBlockFull() {
-        while (!block.isFull()) {
-            block.addRecord(record);
-            System.out.println("Inserting to block" + block.getEmptyIndex());
-=======
     static Block block = new Block();
     public static void testRecord()
     {
@@ -51,26 +38,10 @@ public class Main {
         while(!block.isFull())
         {
             Address adr =  block.addRecord(record);
->>>>>>> Stashed changes
         }
         System.out.println("Block is full");
     }
 
-<<<<<<< Updated upstream
-    public static void testBlockDelnInsert() {
-        if (block.deleteRecord(11)) {
-            System.out.println("Block not found!");
-        }
-
-        if (block.deleteRecord(5)) {
-            System.out.println("Block 5 deleted!\nCurrent pointer at : " + block.getEmptyIndex() + "\nPrev pointer at :"
-                    + block.getPrevIndex());
-
-            block.addRecord(record);
-
-            System.out.println("Inserted to empty block!\nCurrent pointer at : " + block.getEmptyIndex()
-                    + "\nPrev pointer at :" + block.getPrevIndex());
-=======
     public static void testBlockDelnInsert()
     {
         System.out.println("\n\n##Block del & insert test##");
@@ -90,7 +61,6 @@ public class Main {
             block.addRecord(record);
 
             System.out.println("Inserted to empty block! Block full: " + block.isFull());
->>>>>>> Stashed changes
         }
     }
 

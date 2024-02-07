@@ -32,10 +32,6 @@ public class Record {
                 "\nRecord timestamp : " + DateConverter.DateFromByte3(this.getRecordHeader().getTimeStamp()) +
                 "\nRecord Data : " + new String(this.getRecordData().gettConst()) + "\n" +
                 this.getRecordData().getAverageRating() + "\n" +
-<<<<<<< Updated upstream
-                IntConverter.ByteToInt(this.getRecordData().getNumVotes()));
-=======
                 IntConverter.ByteToInt(this.getRecordData().getNumVotes())  + "\n");
->>>>>>> Stashed changes
     }
 }
