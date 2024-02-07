@@ -10,6 +10,11 @@ public class Disk {
 
     private int currIndex = 0;
 
+    //Getter
+    public Block[] getBlocks() {
+        return blocks;
+    }
+
     public Disk()
     {
         TotalDiskSize = DiskSize * 1024 * 1024;
@@ -18,7 +23,7 @@ public class Disk {
         blocks = new Block[MaxBlock];
     }
 
-    public BlockHeader addRecord(Record record)
+    public Address addRecord(Record record)
     {
         if(currIndex > MaxBlock)
         {
@@ -34,21 +39,17 @@ public class Disk {
                 blocks[currIndex] = new Block();
             }
 
-            return blocks[currIndex].addRecord(record);
+            return blocks[currIndex].addRecord(currIndex ,record);
         }
     }
 
-    public boolean deleteRecord(BlockHeader blockHeader)
+    public boolean deleteRecord(Address address)
     {
-        Block block = blockHeader.getBlock();
+        //Get block from disk
+        Block block = blocks[address.getBlock()];
 
-        if(block.deleteRecord(blockHeader.getIndex() - 1))
+        if(block.deleteRecord(address.getIndex()))
         {
-            if(block.getCurrIndex() < getBlockCount() )
-            {
-                diskCompress(block);
-            }
-
             return true;
         }
         else
@@ -57,62 +58,5 @@ public class Disk {
         }
     }
 
-    public int getBlockCount()
-    {
-        int count;
-        for(count = 0 ; count < MaxBlock; count++)
-        {
-            if(this.getBlocks()[count] == null) return count;
-        }
-        return MaxBlock;
-    }
 
-    public Block[] getBlocks() {
-        return blocks;
-    }
-
-    private void diskCompress(Block block)
-    {
-        //Find located of the block
-        int index = 0;
-        for (Block b : blocks )
-        {
-            if(b == block)
-            {
-                 break;
-            }
-            index++;
-        }
-
-        //Make sure next block is not empty
-        if(index + 1 <= currIndex)
-        {
-            //Since each delete always compress block just need to push in data from the next block if exist until the latest block
-            for(int i = index; i < currIndex; i++)
-            {
-                if(i + 1 <= currIndex) {
-                    if (blocks[i + 1] != null) {
-                        //Add first record from next block
-                        blocks[i].addRecord(blocks[i + 1].getRecords()[0]);
-
-                        //Delete first record from next block and compressed
-                        blocks[i + 1].deleteRecord(0);
-
-                        //If the currentIndex block is empty delete the block
-                        if (blocks[i + 1].isEmpty()) {
-                            blocks[currIndex] = null;
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            if(blocks[currIndex] != null) {
-                if (blocks[currIndex].isEmpty()) {
-                    blocks[currIndex] = null;
-                }
-            }
-        }
-    }
 }

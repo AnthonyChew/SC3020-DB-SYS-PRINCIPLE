@@ -1,4 +1,5 @@
 import Records.Record;
+import Utils.ByteUtils;
 
 
 public class Block {
@@ -6,7 +7,7 @@ public class Block {
     public static final int RecordSize = 30; // 30 bytes record size
     public static final int MaxNumRecords = BlockSize / RecordSize;
     private Record[] records;
-    private byte currIndex = 0;
+    private byte emptyFlag = 0;
 
     // Getter
     public Record[] getRecords() {
@@ -14,7 +15,7 @@ public class Block {
     }
 
     public byte getCurrIndex() {
-        return currIndex;
+        return emptyFlag;
     }
 
     /*
@@ -22,29 +23,28 @@ public class Block {
      * Generate all empty records
      */
     public Block() {
-        currIndex = 0;
         records = new Record[MaxNumRecords];
     }
 
-    public BlockHeader addRecord(Record record) {
+    public Address addRecord(int blockIndex, Record record) {
+        int offset = ByteUtils.findFirstZeroBitPosition(emptyFlag);
 
-        if (currIndex < MaxNumRecords) {
-            records[currIndex] = record;
-            currIndex++;
+        if (offset >= 0) {
+            records[offset] = record;
+            emptyFlag = ByteUtils.toggleBit(emptyFlag, offset);
         } else {
-            records[currIndex] = record;
+            return null;
         }
 
-        return new BlockHeader(this, currIndex);
+        return new Address(blockIndex, offset);
     }
 
     public boolean deleteRecord(int index) {
         if (index < MaxNumRecords) {
-            //Reduce curr index - 1 since will be compressed
-            currIndex--;
+            emptyFlag = ByteUtils.toggleBit(emptyFlag, index);
 
             //Compress func
-            compress(index);
+            //compress(index);
             return true;
         } else {
             return false;
@@ -52,24 +52,10 @@ public class Block {
     }
 
     public boolean isFull() {
-        return currIndex >= MaxNumRecords;
+        return ByteUtils.isBitAllOne(emptyFlag, MaxNumRecords);
     }
 
     public boolean isEmpty() {
-        return currIndex == 0;
-    }
-
-    public void compress(int index) {
-        //Create new array
-        Record[] recordArray = new Record[MaxNumRecords];
-
-        //Copy unmoved slot
-        if (index > 0) System.arraycopy(records, 0, recordArray, 0, index);
-
-        //Copy moved slot
-        if (index + 1 < MaxNumRecords) System.arraycopy(records, index + 1, recordArray, index, records.length - index - 1);
-
-        //Update records to new array
-        records = recordArray;
+        return emptyFlag == 0;
     }
 }
