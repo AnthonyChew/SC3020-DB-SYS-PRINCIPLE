@@ -1,5 +1,6 @@
 import Index.BPlusTree;
 import Records.Record;
+import Records.Record;
 import Records.RecordData;
 import Records.RecordHeader;
 import Utils.TsvReader;
@@ -22,6 +23,7 @@ public class Main {
         // Disk test
         testDisk();
 
+        // TsvReader.TsvToStringArray("data.tsv").get(0).printRecord();
         TsvReader.TsvToStringArray("data.tsv").get(0).printRecord();
 
     }
@@ -29,6 +31,9 @@ public class Main {
     static Record record;<<<<<<<
     Updated upstream
     static Block block = new Block();;
+
+    public static void testRecord() {
+        record = new Record(new RecordHeader(0), new RecordData("tt0000001", 5.6f, 1645));
 
     public static void testRecord() {
         record = new Record(new RecordHeader(0), new RecordData("tt0000001", 5.6f, 1645));
