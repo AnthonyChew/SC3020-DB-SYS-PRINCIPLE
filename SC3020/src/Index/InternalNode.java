@@ -78,11 +78,6 @@ public class InternalNode extends Node {
     // Split the internal node
     // Only called when the internal node is full
     public InternalNode splitInternalNode(int key, Node rightChild) {
-        // find insert index
-        int index = 0;
-        while (index < this.numKeys && this.keys[index] < key) {
-            index++;
-        }
         InternalNode rightNode = new InternalNode(super.getOrder());
         int mid = this.numKeys / 2;
         if (this.numKeys % 2 == 1) {
