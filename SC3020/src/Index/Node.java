@@ -66,11 +66,11 @@ public abstract class Node {
 
         LeafNode _this = (LeafNode) this;
         boolean isNotFull = _this.addKey(key, value);
-        if (!isNotFull) {
+        if (isNotFull) {
+            return null;
+        } else {
             Node newChild = _this.splitLeafNode(key, value);
             return newChild;
-        } else {
-            return null;
         }
     }
 
