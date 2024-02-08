@@ -47,8 +47,8 @@ public abstract class Node {
 
     public Node insert(int key, int value) {
         while (this instanceof InternalNode) {
-            Node child = this.findChild(key);  // func in intenral node
-            Node newChild = child.insert(key, value); // new child created by splitting full child 
+            Node child = this.findChild(key); // func in intenral node
+            Node newChild = child.insert(key, value); // new child created by splitting full child
 
             if (newChild == null) {
                 return null;
@@ -63,10 +63,10 @@ public abstract class Node {
                 return null;
             }
         }
-        
+
         LeafNode _this = (LeafNode) this;
-        boolean isFull = _this.addKey(key, value);
-        if (isFull) {
+        boolean isNotFull = _this.addKey(key, value);
+        if (!isNotFull) {
             Node newChild = _this.splitLeafNode(key, value);
             return newChild;
         } else {
