@@ -80,66 +80,28 @@ public class InternalNode extends Node {
     public InternalNode splitInternalNode(int key, Node rightChild) {
         // find insert index
         int index = 0;
-        while (index < this.numKeys && this.keys[index] <= key) {
-            // duplicate key
-            if (this.keys[index] == key)
-                break;
+        while (index < this.numKeys && this.keys[index] < key) {
             index++;
         }
         InternalNode rightNode = new InternalNode(super.getOrder());
         int mid = this.numKeys / 2;
-
-        // insert into left node
-        if (index <= mid) {
-            // copy over to right node starting from mid
-            for (int i = mid, j = 0; i < this.numKeys + 1; i++, j++) {
-                if (i < this.numKeys)
-                    rightNode.keys[j] = this.keys[i];
-
-                rightNode.children[j] = this.children[i];
-                rightNode.children[j].setParent(rightNode);
-            }
-
-            // Shift the keys and children to the right
-            for (int i = this.numKeys - 1; i > index; i--) {
-                this.keys[i] = this.keys[i - 1];
-            }
-            for (int i = this.numChildren - 1; i > index + 1; i--) {
-                this.children[i] = this.children[i - 1];
-            }
-
-            // inserting of new key and updating data pointer
-            this.keys[index] = key;
-            this.children[index + 1] = rightChild;
-        } else { // insert into right node
-            // boolean inserted = false; // check whether the new key has been inserted
-            // already
-            // for (int i = mid, j = 0; i <= this.numKeys; i++, j++) {
-            // // else if inserted child is somewhere in the middle of the new right node,
-            // need
-            // // copy both pointer and key
-            // if (index == i && !inserted) {
-            // if (i == this.numKeys) {
-            // rightNode.children[j] = rightNode;
-            // rightNode.children[j].setParent(rightNode);
-            // } else {
-            // rightNode.children[j] = rightNode;
-            // rightNode.children[j].setParent(rightNode);
-            // rightNode.keys[j] = rightNode.keys[j - 1];
-            // rightNode.keys[j - 1] = key;
-            // i--;
-            // inserted = true;
-            // }
-            // } else {
-            // rightNode.children[j] = this.children[i + 1];
-            // rightNode.children[j].setParent(rightNode);
-            // if (i + 1 == this.numKeys)
-            // break;
-            // if (i + 1 < this.numKeys)
-            // rightNode.keys[j] = this.keys[i + 1];
-            // }
-            // }
+        if (this.numKeys % 2 == 1) {
+            mid++;
         }
+
+        for (int i = mid; i < this.numKeys; i++) {
+            rightNode.keys[i - mid] = this.keys[i];
+            rightNode.children[i - mid + 1] = this.children[i + 1];
+        }
+        rightNode.numKeys = this.numKeys - mid;
+        rightNode.numChildren = this.numChildren - mid;
+
+        if (key >= rightChild.getKey(0)) {
+            rightNode.addKey(key, rightChild);
+        } else {
+            this.addKey(key, rightChild);
+        }
+
         return rightNode;
     }
 
