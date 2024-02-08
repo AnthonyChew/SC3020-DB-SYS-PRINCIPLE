@@ -55,12 +55,12 @@ public abstract class Node {
             }
 
             InternalNode _this = (InternalNode) this;
-            boolean isFull = _this.addKey(newChild.getKey(0), newChild);
-            if (isFull) {
+            boolean isNotFull = _this.addKey(newChild.getKey(0), newChild);
+            if (isNotFull) {
+                return null;
+            } else {
                 Node newInternalNode = _this.splitInternalNode(newChild.getKey(0), newChild);
                 return newInternalNode;
-            } else {
-                return null;
             }
         }
 

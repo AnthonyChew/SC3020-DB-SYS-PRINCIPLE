@@ -59,11 +59,9 @@ public class InternalNode extends Node {
         }
 
         // Shift the keys and children to the right
-        for (int i = this.numKeys - 1; i > index; i--) {
-            this.keys[i] = this.keys[i - 1];
-        }
-        for (int i = this.numChildren - 1; i > index + 1; i--) {
-            this.children[i] = this.children[i - 1];
+        for (int i = this.numKeys - 1; i >= index; i--) {
+            this.keys[i + 1] = this.keys[i];
+            this.children[i + 2] = this.children[i + 1];
         }
 
         // Add the key and the right child
@@ -104,6 +102,4 @@ public class InternalNode extends Node {
         return this.children[0].getSubtreeLB();
     }
 
-
-    
 }
