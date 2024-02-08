@@ -12,7 +12,7 @@ public class BPlusTree {
         if (result != null) {
             InternalNode newRoot = new InternalNode(this.root.getOrder(), result.getKey(0), this.root, result);
             this.root = newRoot;
-        } 
+        }
     }
 
     // Not used in the current implementation
@@ -32,11 +32,8 @@ public class BPlusTree {
     public void traverseTree(Node root) {
         if (root instanceof LeafNode) {
             LeafNode leaf = (LeafNode) root;
-            while (leaf != null) {
-                for (int i = 0; i < leaf.getNumKeys(); i++) {
-                    System.out.print(leaf.getKey(i) + " ");
-                }
-                leaf = leaf.getNextLeafNode();
+            for (int i = 0; i < leaf.getNumKeys(); i++) {
+                System.out.print(leaf.getKey(i) + " ");
             }
         } else {
             InternalNode internal = (InternalNode) root;

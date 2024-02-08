@@ -54,6 +54,9 @@ public class Main {
 
         BPlusTree tree = new BPlusTree(3);
         tree.insert(4, 4);
+        tree.insert(3, 3);
+        tree.insert(2, 2);
+        tree.insert(1, 1);
 
         tree.printTree();
     }

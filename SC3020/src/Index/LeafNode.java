@@ -71,12 +71,6 @@ public class LeafNode extends Node {
     }
 
     // Split the leaf node and return the new leaf node
-    /*
-     * if numKeys is odd, mid + 1
-     * 
-     * 
-     * 
-     */
     public LeafNode splitLeafNode(int key, int value) {
         int mid = this.numKeys / 2;
         if (this.numKeys % 2 == 1) {
