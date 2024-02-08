@@ -83,6 +83,7 @@ public class LeafNode extends Node {
             mid++;
         }
         LeafNode newLeaf = new LeafNode(super.getOrder());
+        this.nextLeafNode = newLeaf;
 
         // Copy the second half of the keys and values to the new leaf
         for (int i = mid; i < this.numKeys; i++) {

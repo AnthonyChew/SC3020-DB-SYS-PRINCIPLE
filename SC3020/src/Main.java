@@ -1,3 +1,4 @@
+import Index.BPlusTree;
 import  Records.Record;
 import Records.RecordData;
 import Records.RecordHeader;
@@ -7,9 +8,10 @@ import Utils.TsvReader;
 
 public class Main {
     public static void main(String[] args) {
-        testRecord();
-        testBlockFull();
-        testBlockDelnInsert();
+        // testRecord();
+        // testBlockFull();
+        // testBlockDelnInsert();
+        testBPlusTree();
 
         TsvReader.TsvToStringArray("data.tsv").get(0).printRecord();
     }
@@ -47,6 +49,16 @@ public class Main {
 
             System.out.println("Inserted to empty block!\nCurrent pointer at : " + block.getEmptyIndex() + "\nPrev pointer at :"+ block.getPrevIndex());
         }
+    }
+
+    public static void testBPlusTree() {
+        int keys[] = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        int values[] = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+        BPlusTree tree = new BPlusTree(3);
+        tree.insert(4, 4);
+
+        tree.printTree();
     }
 
 }
