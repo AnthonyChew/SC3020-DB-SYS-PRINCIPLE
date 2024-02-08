@@ -103,4 +103,7 @@ public class InternalNode extends Node {
     public int getSubtreeLB() {
         return this.children[0].getSubtreeLB();
     }
+
+
+    
 }
