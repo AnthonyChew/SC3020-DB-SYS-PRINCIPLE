@@ -47,7 +47,7 @@ public abstract class Node {
 
     public Node insert(int key, int value) {
         while (this instanceof InternalNode) {
-            Node child = this.findChild();  // func in intenral node
+            Node child = this.findChild(key);  // func in intenral node
             Node newChild = child.insert(key, value); // new child created by splitting full child 
 
             if (newChild == null) {
@@ -72,5 +72,15 @@ public abstract class Node {
         } else {
             return null;
         }
+    }
+
+    public Node findChild(int key) {
+        for (int i = 0; i < this.numKeys; i++) {
+            if (key >= this.keys[i]) {
+                InternalNode _this = (InternalNode) this;
+                return _this.getChild(i + 1);
+            }
+        }
+        return null;
     }
 }

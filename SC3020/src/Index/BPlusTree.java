@@ -8,44 +8,14 @@ public class BPlusTree {
     }
 
     public void insert(int key, int value) {
-        // If root is a LeafNode, insert the key and value
-        if (this.root instanceof LeafNode) {
-            LeafNode leaf = (LeafNode) this.root;
-            if (!leaf.addKey(key, value)) {
-                // If the leaf is full, split it
-                LeafNode newLeaf = leaf.splitLeafNode(key, value);
-                if (leaf.getNextLeafNode() != null) {
-                    newLeaf.setNextLeafNode(leaf.getNextLeafNode());
-                }
-                leaf.setNextLeafNode(newLeaf);
-                InternalNode newRoot = new InternalNode(leaf.getOrder(), newLeaf.getSubtreeLB(), leaf, newLeaf);
-                leaf.setParent(newRoot);
-                newLeaf.setParent(newRoot);
-                this.root = newRoot;
-            }
-        } else { // If root is an InternalNode, find the leaf node to insert
-            LeafNode leaf = this.findInsertLeafNode(key);
-            // leaf.insert();
-            // if (root.hasParent()) {
-            // this.root = root.getParent()
-            // }
-
-            if (!leaf.addKey(key, value)) {
-                // If the leaf is full, split it
-                LeafNode newLeaf = leaf.splitLeafNode(key, value);
-                if (leaf.getNextLeafNode() != null) {
-                    newLeaf.setNextLeafNode(leaf.getNextLeafNode());
-                }
-                leaf.setNextLeafNode(newLeaf);
-                // TODO: figure out how to recursively split the parent nodes
-                InternalNode parent = leaf.getParent();
-                if (!parent.addKey(newLeaf.getSubtreeLB(), newLeaf)) {
-                    InternalNode newInternalNode = parent.splitInternalNode(newLeaf.getSubtreeLB(), newLeaf);
-                }
-            }
-        }
+        Node result = this.root.insert(key, value);
+        if (result != null) {
+            InternalNode newRoot = new InternalNode(this.root.getOrder(), result.getKey(0), this.root, result);
+            this.root = newRoot;
+        } 
     }
 
+    // Not used in the current implementation
     public LeafNode findInsertLeafNode(int key) {
         Node node = this.root;
         while (node instanceof InternalNode) {
@@ -57,5 +27,26 @@ public class BPlusTree {
             node = internal.getChild(index);
         }
         return (LeafNode) node;
+    }
+
+    public void traverseTree(Node root) {
+        if (root instanceof LeafNode) {
+            LeafNode leaf = (LeafNode) root;
+            while (leaf != null) {
+                for (int i = 0; i < leaf.getNumKeys(); i++) {
+                    System.out.print(leaf.getKey(i) + " ");
+                }
+                leaf = leaf.getNextLeafNode();
+            }
+        } else {
+            InternalNode internal = (InternalNode) root;
+            for (int i = 0; i < internal.getNumChildren(); i++) {
+                traverseTree(internal.getChild(i));
+            }
+        }
+    }
+
+    public void printTree() {
+        this.traverseTree(this.root);
     }
 }
