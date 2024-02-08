@@ -75,12 +75,12 @@ public abstract class Node {
     }
 
     public Node findChild(int key) {
+        InternalNode _this = (InternalNode) this;
         for (int i = 0; i < this.numKeys; i++) {
             if (key >= this.keys[i]) {
-                InternalNode _this = (InternalNode) this;
                 return _this.getChild(i + 1);
             }
         }
-        return null;
+        return _this.getChild(0);
     }
 }
