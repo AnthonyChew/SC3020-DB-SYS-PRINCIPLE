@@ -44,4 +44,33 @@ public abstract class Node {
     }
 
     public abstract int getSubtreeLB();
+
+    public Node insert(int key, int value) {
+        while (this instanceof InternalNode) {
+            Node child = this.findChild();  // func in intenral node
+            Node newChild = child.insert(key, value); // new child created by splitting full child 
+
+            if (newChild == null) {
+                return null;
+            }
+
+            InternalNode _this = (InternalNode) this;
+            boolean isFull = _this.addKey(newChild.getKey(0), newChild);
+            if (isFull) {
+                Node newInternalNode = _this.splitInternalNode(newChild.getKey(0), newChild);
+                return newInternalNode;
+            } else {
+                return null;
+            }
+        }
+        
+        LeafNode _this = (LeafNode) this;
+        boolean isFull = _this.addKey(key, value);
+        if (isFull) {
+            Node newChild = _this.splitLeafNode(key, value);
+            return newChild;
+        } else {
+            return null;
+        }
+    }
 }
