@@ -1,15 +1,13 @@
 package Index;
 
 public class LeafNode extends Node {
-    private int[] keys;
-    private int[] values;   // Will be replaced with the Address array instead
-    private int numKeys;
+    private int[] values; // Will be replaced with the Address array instead
+    private LeafNode nextLeafNode;
 
     public LeafNode(int order) {
-        super(order);   
-        this.keys = new int[order - 1];
+        super(order);
         this.values = new int[order - 1];
-        this.numKeys = 0;
+        this.nextLeafNode = null;
     }
 
     public int getNumKeys() {
@@ -20,21 +18,25 @@ public class LeafNode extends Node {
         return this.keys[index];
     }
 
-    public boolean isFull() {
-        return this.numKeys == super.getOrder() - 1;
+    public LeafNode getNextLeafNode() {
+        return this.nextLeafNode;
+    }
+
+    public void setNextLeafNode(LeafNode nextLeafNode) {
+        this.nextLeafNode = nextLeafNode;
     }
 
     // value will be replaced with Address obj
     public boolean addKey(int key, int value) {
         // If the node is full, return false
         if (this.isFull()) {
-            return false;   
+            return false;
         }
 
         // Find the index where the key should be inserted
         int index = 0;
         while (index < this.numKeys && this.keys[index] < key) {
-            index ++;
+            index++;
         }
 
         // Shift the keys and values to the right
@@ -46,13 +48,13 @@ public class LeafNode extends Node {
         // Insert the key and value
         this.keys[index] = key;
         this.values[index] = value;
-        this.numKeys ++;
+        this.numKeys++;
 
         return true;
     }
 
     // Search for the Address mapped to the given key
-    public int binarySearch(int key) {  // Will be changed to return Address obj instead
+    public int binarySearch(int key) { // Will be changed to return Address obj instead
         int left = 0;
         int right = this.numKeys - 1;
         while (left <= right) {
@@ -89,5 +91,9 @@ public class LeafNode extends Node {
         }
 
         return newLeaf;
+    }
+
+    public int getSubtreeLB() {
+        return this.keys[0];
     }
 }
