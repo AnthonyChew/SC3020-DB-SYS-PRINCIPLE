@@ -1,0 +1,27 @@
+leaf node:
+-> n keys and n+1 pointers
+-> min: (n+1) // 2 keys
+
+internal node:
+-> n keys and n+1 pointers
+-> min: n // 2 keys 
+-> create new node when keys are full -> copy half of the array over
+
+order = n+1
+
+insertion:
+-> if root is leaf
+    -> insert 
+        -> if full 
+            -> split
+            -> create new internal node 
+            -> update root = internal node
+-> else
+    -> find leaf node to insert
+        -> insert 
+            -> if full 
+                -> split
+                -> add new leaf to parent
+                -> if parent full
+                    -> split ()
+            
