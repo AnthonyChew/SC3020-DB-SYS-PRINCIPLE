@@ -11,7 +11,8 @@ import java.util.ArrayList;
 
 public class TsvReader {
     public static ArrayList<Record> TsvToStringArray(String fileName) {
-        File file = new File("src/" + fileName);
+        //Make sure always get from project path 
+        File file = new File(System.getProperty("user.dir") + "/SC3020/src/" + fileName);
 
         ArrayList<Record> Data = new ArrayList<>();
         try (BufferedReader TSVReader = new BufferedReader(new FileReader(file))) {

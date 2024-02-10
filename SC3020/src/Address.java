@@ -1,31 +1,30 @@
 import Records.Record;
 
 public class Address {
-    private Block block;
-    private int blockIndex;
-    private int recordIndex;
+    private int block;
+    private int index;
 
-    public Address(Block block, int recordIndex) {
+    public Address(int block, int index) {
         this.block = block;
-        this.recordIndex = recordIndex;
+        this.index = index;
     }
 
-    public Block getBlock() {
+    public int getBlock() {
         return block;
     }
 
-    public int getBlockIndex() {
-        return this.blockIndex;
-    }
-
     public int getIndex() {
-        return recordIndex;
+        return index;
     }
 
-    public Record getRecord(int recordIndex) {
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public Record getRecord(Disk disk,int blockIndex ,int recordIndex) {
         /**
          * Get specific record inside block
          */
-        return block.getRecords()[recordIndex];
+        return disk.getBlocks()[blockIndex].getRecords()[index];
     }
 }

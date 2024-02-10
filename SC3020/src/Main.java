@@ -19,7 +19,7 @@ public class Main {
         //Disk test
         testDisk();
 
-        TsvReader.TsvToStringArray("data.tsv").get(0).printRecord();
+        //TsvReader.TsvToStringArray("data.tsv").get(0).printRecord();
 
     }
 
@@ -33,17 +33,17 @@ public class Main {
 
     public static void testBlockFull()
     {
-        System.out.println("\n\nBlock insert test");
+        System.out.println("\n\n################Block insert test################");
         while(!block.isFull())
         {
-            Address adr =  block.addRecord(record);
+            Address adr =  block.addRecord(0 ,record);
         }
         System.out.println("Block is full");
     }
 
     public static void testBlockDelnInsert()
     {
-        System.out.println("\n\n##Block del & insert test##");
+        System.out.println("\n\n################Block del & insert test################");
         if(block.deleteRecord(11))
         {
             System.out.println("Block not found!");
@@ -57,7 +57,7 @@ public class Main {
 
             System.out.println("Inserted to empty block! Block full: " + block.isFull() + "\nCurrent index : " + block.getCurrIndex());
 
-            block.addRecord(record);
+            block.addRecord(0 ,record);
 
             System.out.println("Inserted to empty block! Block full: " + block.isFull());
         }
@@ -65,7 +65,7 @@ public class Main {
 
     public static void testBlockFullDel()
     {
-        System.out.println("\n\n##Block full del##");
+        System.out.println("\n\n################Block full del################");
 
         Block cBlock = new Block();
         Random rnd = new Random();
@@ -75,7 +75,7 @@ public class Main {
 
         while(!cBlock.isFull())
         {
-            Address adr =  cBlock.addRecord(record);
+            Address adr =  cBlock.addRecord(0,record);
             allIndex.add(index) ;
             index ++;
         }
@@ -108,29 +108,32 @@ public class Main {
 
     public static void testDisk()
     {
-        System.out.println("\n\n##Disk insert test##");
+        System.out.println("\n\n################Disk insert test################");
         Disk disk = new Disk();
-        ArrayList<Address> addresses = new ArrayList<>();
+        ArrayList<Address> Addresss = new ArrayList<>();
         Random rnd = new Random();
 
         int i;
         //fill disk with records
         for(i = 0; i < 18; i++)
         {
-            addresses.add(disk.addRecord(record));
-        }
+            Addresss.add(disk.addRecord(record));
+        }   
 
-        System.out.println("Current block amount : " + disk.getBlockCount());
+        //System.out.println("Current block amount : " + disk.getBlockCount());
 
         for(int j = 0; j < 18; j++)
         {
-            Address addToDel = addresses.get( rnd.nextInt(i - j));
-            addresses.remove(addToDel);
 
+            int indexToDel = rnd.nextInt(i - j);
+            Address addToDel = Addresss.get(indexToDel);
+
+            Addresss.remove(addToDel);
+            
             disk.deleteRecord(addToDel);
         }
 
-        System.out.println("Current block amount : " + disk.getBlockCount());
+        System.out.println("Current block amount : " + disk.getBlocks().length);
 
     }
 }
