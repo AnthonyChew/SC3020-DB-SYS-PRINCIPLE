@@ -29,11 +29,12 @@ public class Record {
 
     public void printRecord() {
         System.out.println("Record pointer : " + this.getRecordHeader().getRecordPointer() +
-                "\nRecord timestamp : " + this.getRecordHeader().getTimeStamp().toString() +
                 "\nRecord Data : " + new String(this.getRecordData().gettConst()) + "\n" +
                 this.getRecordData().getAverageRating() + "\n" +
                 this.getRecordData().getNumVotes()  + "\n");
     }
 
-
+    public void setRecordSize() {
+        this.recordHeader.setRecordSize(this.recordData);
+    }
 }

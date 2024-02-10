@@ -24,7 +24,7 @@ public class Controller {
         // Report statistics:
         System.out.println("Total number of records: " + records.size() + " records.");
         // TODO: Write function to retrieve data type and calculate record size.
-//        System.out.println("Size of each record: " + records + " bytes.");
+        System.out.println("Size of each record: " + records.get(0).getRecordHeader().getRecordSize() + " bytes.");
         System.out.println("Number of records per block: " + this.disk.getBlocks()[0].getRecords().length + " records.");
         // TODO: Write function to retrieve number of blocks that was used, not total number of blocks.
         System.out.println("Number of blocks to store data: " +

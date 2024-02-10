@@ -4,6 +4,7 @@ import Utils.ByteUtils;
 
 public class Block {
     public static final int BlockSize = 200; // 200 bytes block size
+    // TODO: Change recordSize from being hardcoded to retrieve the recordSize from recordHeader
     public static final int RecordSize = 30; // 30 bytes record size
     public static final int MaxNumRecords = BlockSize / RecordSize;
     private Record[] records;

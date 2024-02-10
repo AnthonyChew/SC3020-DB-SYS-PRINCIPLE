@@ -67,7 +67,11 @@ public class Main {
     }
 
     public static void testRecord() {
-        record = new Record(new RecordHeader(0, null), new RecordData("tt0000001", 5.6f, 1645));
+        RecordData recordData = new RecordData("tt0000001", 5.6f, 1645);
+        record = new Record(
+                new RecordHeader(0, null, recordData),
+                recordData
+        );
         record.printRecord();
     }
 
