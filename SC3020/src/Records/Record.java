@@ -34,4 +34,6 @@ public class Record {
                 this.getRecordData().getAverageRating() + "\n" +
                 this.getRecordData().getNumVotes()  + "\n");
     }
+
+
 }

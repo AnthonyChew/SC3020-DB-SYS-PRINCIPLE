@@ -9,6 +9,8 @@ public class RecordHeader {
 
     private Date timeStamp; // 3 bytes //change to datetime
 
+    private int recordSize; // Record Size, including recordData and recordHeader
+
     public int getRecordPointer() {
         return recordPointer;
     }
@@ -20,5 +22,9 @@ public class RecordHeader {
     public RecordHeader(int recordPointer , byte[] schemaPointer) {
         this.recordPointer = recordPointer;
         this.timeStamp = new Date();
+    }
+
+    public void setRecordSize(int size) {
+        this.recordSize = size;
     }
 }

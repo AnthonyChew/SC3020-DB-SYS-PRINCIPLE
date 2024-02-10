@@ -58,5 +58,13 @@ public class Disk {
         }
     }
 
-
+    public int getTotalUsedBlocks() {
+        int usedBlockCount = 0;
+        for (int i = 0; i < this.blocks.length; i++) {
+            if (this.blocks[i] != null && !this.blocks[i].isEmpty()) {
+                usedBlockCount++;
+            }
+        }
+        return usedBlockCount;
+    }
 }

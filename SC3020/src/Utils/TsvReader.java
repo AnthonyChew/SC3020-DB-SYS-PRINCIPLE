@@ -21,7 +21,14 @@ public class TsvReader {
             while ((line = TSVReader.readLine()) != null) {
                 if (index != 0) {
                     String[] lineItems = line.split("\t");
-                    Record record = new Record(new RecordHeader(index,null), new RecordData(lineItems[0], Float.parseFloat(lineItems[1]), Integer.parseInt(lineItems[2])));
+                    Record record = new Record(
+                            new RecordHeader(index,null),
+                            new RecordData(
+                                    lineItems[0],
+                                    Float.parseFloat(lineItems[1]),
+                                    Integer.parseInt(lineItems[2])
+                            )
+                    );
 
                     Data.add(record); // add to Data
                 }
