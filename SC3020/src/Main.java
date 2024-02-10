@@ -36,7 +36,7 @@ public class Main {
         System.out.println("\n\nBlock insert test");
         while(!block.isFull())
         {
-            BlockHeader adr =  block.addRecord(record);
+            Address adr =  block.addRecord(record);
         }
         System.out.println("Block is full");
     }
@@ -75,7 +75,7 @@ public class Main {
 
         while(!cBlock.isFull())
         {
-            BlockHeader adr =  cBlock.addRecord(record);
+            Address adr =  cBlock.addRecord(record);
             allIndex.add(index) ;
             index ++;
         }
@@ -110,22 +110,22 @@ public class Main {
     {
         System.out.println("\n\n##Disk insert test##");
         Disk disk = new Disk();
-        ArrayList<BlockHeader> blockHeaders = new ArrayList<>();
+        ArrayList<Address> addresses = new ArrayList<>();
         Random rnd = new Random();
 
         int i;
         //fill disk with records
         for(i = 0; i < 18; i++)
         {
-            blockHeaders.add(disk.addRecord(record));
+            addresses.add(disk.addRecord(record));
         }
 
         System.out.println("Current block amount : " + disk.getBlockCount());
 
         for(int j = 0; j < 18; j++)
         {
-            BlockHeader addToDel = blockHeaders.get( rnd.nextInt(i - j));
-            blockHeaders.remove(addToDel);
+            Address addToDel = addresses.get( rnd.nextInt(i - j));
+            addresses.remove(addToDel);
 
             disk.deleteRecord(addToDel);
         }

@@ -18,7 +18,7 @@ public class Disk {
         blocks = new Block[MaxBlock];
     }
 
-    public BlockHeader addRecord(Record record)
+    public Address addRecord(Record record)
     {
         if(currIndex > MaxBlock)
         {
@@ -38,11 +38,11 @@ public class Disk {
         }
     }
 
-    public boolean deleteRecord(BlockHeader blockHeader)
+    public boolean deleteRecord(Address address)
     {
-        Block block = blockHeader.getBlock();
+        Block block = address.getBlock();
 
-        if(block.deleteRecord(blockHeader.getIndex() - 1))
+        if(block.deleteRecord(address.getIndex() - 1))
         {
             if(block.getCurrIndex() < getBlockCount() )
             {
