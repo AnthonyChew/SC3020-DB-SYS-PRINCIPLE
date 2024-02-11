@@ -1,8 +1,11 @@
 package Records;
 
+import Utils.CalculateSizeUtil;
+
+//Record data [18 bytes | tCosnt][4 bytes | averageRating][4 bytes | numVotes]
 public class RecordData {
     private char[] tConst; //18 bytes
-    private float averageRating;//1 byte //change to float
+    private float averageRating;//4 bytes
     private int numVotes;//4 bytes
 
     // Constructor
@@ -15,10 +18,6 @@ public class RecordData {
     // Getter
     public char[] gettConst() {
         return tConst;
-    }
-
-    public void settConst(char[] tConst) {
-        this.tConst = tConst;
     }
 
     public float getAverageRating() {

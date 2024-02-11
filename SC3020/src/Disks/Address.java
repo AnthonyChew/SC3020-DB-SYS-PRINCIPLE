@@ -1,3 +1,5 @@
+package Disks;
+
 import Records.Record;
 
 public class Address {
@@ -21,10 +23,11 @@ public class Address {
         this.index = index;
     }
 
-    public Record getRecord(Disk disk,int blockIndex ,int recordIndex) {
-        /**
-         * Get specific record inside block
-         */
+    /*
+     * Get specific record inside block
+     */
+    public Record getRecord(Disk disk, int blockIndex , int recordIndex) {
+
         return disk.getBlocks()[blockIndex].getRecords()[index];
     }
 }

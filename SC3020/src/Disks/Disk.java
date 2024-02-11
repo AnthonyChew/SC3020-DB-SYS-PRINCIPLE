@@ -1,20 +1,24 @@
+package Disks;
+
+import Blocks.Block;
 import Records.Record;
 
-
+//Disk class
 public class Disk {
-    private static final int DiskSize = 100;
-    private final int TotalDiskSize;
-    private final int MaxBlock;
+    private static final int DiskSize = 100; // Disk size 100 MB
+    private final int TotalDiskSize; // Total disk size (in Bytes)
+    private final int MaxBlock; // Amount of block size for disk
 
-    private Block[] blocks;
+    private Block[] blocks; // Block array
 
-    private int currIndex = 0;
+    private int currIndex = 0; // Current index
 
     //Getter
     public Block[] getBlocks() {
         return blocks;
     }
 
+    //Constructor to calculate total disk size, max block amount and set all empty block in disk
     public Disk()
     {
         TotalDiskSize = DiskSize * 1024 * 1024;
@@ -23,6 +27,11 @@ public class Disk {
         blocks = new Block[MaxBlock];
     }
 
+    /*
+    Add record to disk
+    if current block is full create a new block
+    add a new record
+    */
     public Address addRecord(Record record)
     {
         if(currIndex > MaxBlock)
@@ -43,6 +52,7 @@ public class Disk {
         }
     }
 
+    //Delete record
     public boolean deleteRecord(Address address)
     {
         //Get block from disk
@@ -58,6 +68,7 @@ public class Disk {
         }
     }
 
+    //Check through all blocks in disk to calculate
     public int getTotalUsedBlocks() {
         int usedBlockCount = 0;
         for (int i = 0; i < this.blocks.length; i++) {

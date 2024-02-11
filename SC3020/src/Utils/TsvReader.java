@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+/*
+    Read line by line in from file and return an array list of records
+*/
 public class TsvReader {
     public static ArrayList<Record> TsvToStringArray(String fileName) {
         //Make sure always get from project path 
@@ -27,7 +30,7 @@ public class TsvReader {
                             Integer.parseInt(lineItems[2])
                     );
                     Record record = new Record(
-                            new RecordHeader(index,null, recordData),
+                            new RecordHeader(index),
                             recordData
                     );
 

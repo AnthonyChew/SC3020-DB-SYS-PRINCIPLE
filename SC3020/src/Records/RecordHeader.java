@@ -1,15 +1,13 @@
 package Records;
 
-import Utils.CalculateSizeUtil;
-
+//Record header class conatins [4 bytes | Record Pointer for identification][4 bytes | To store size of whole record]
 public class RecordHeader {
     private int recordPointer; //4 bytes
-    private int recordSize; // Record Size, including recordData and recordHeader
+    private int recordSize; // Record Size = (recordData + recordHeader)
 
     // Constructor
-    public RecordHeader(int recordPointer, byte[] schemaPointer, RecordData recordData) {
+    public RecordHeader(int recordPointer) {
         this.recordPointer = recordPointer;
-        this.recordSize = calculateRecordSize(recordData);
     }
 
     // Getters
@@ -22,17 +20,7 @@ public class RecordHeader {
     }
 
     // Setters
-    public void setRecordSize(RecordData data) {
-        this.recordSize = calculateRecordSize(data);
-    }
-
-    public int calculateRecordSize(RecordData data) {
-        int size = 0;
-        size = size + (CalculateSizeUtil.getSize(data.gettConst()[0]) * data.gettConst().length);
-        size = size + CalculateSizeUtil.getSize(data.getAverageRating());
-        size = size + CalculateSizeUtil.getSize(data.getNumVotes());
-        size = size + CalculateSizeUtil.getSize(getRecordPointer());
-        size = size + CalculateSizeUtil.getSize(getRecordSize());
-        return size;
+    protected void setRecordSize(int recordSize) {
+        this.recordSize = recordSize;
     }
 }

@@ -1,3 +1,5 @@
+import Disks.Address;
+import Disks.Disk;
 import Records.Record;
 import Utils.TsvReader;
 
