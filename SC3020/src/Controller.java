@@ -77,14 +77,6 @@ public class Controller {
         System.out.println("***Experiment 5 - Delete movies with 'numVotes' equal to 1000, " +
                 "update B+ tree and report statistics.***");
 
-        ArrayList<Record> records = TsvReader.TsvToStringArray("data.tsv");
-        records.forEach(
-                record -> {
-                    Address address = disk.addRecord(record);
-                    addresses.add(address);
-                }
-        );
-
         long startDelRecord = System.nanoTime();
 
         //Brute force search through record
