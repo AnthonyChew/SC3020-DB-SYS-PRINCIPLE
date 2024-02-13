@@ -5,6 +5,8 @@ import Utils.TsvReader;
 
 import java.util.ArrayList;
 
+import Blocks.Block;
+
 public class Controller {
     private Disk disk;
     private ArrayList<Address> addresses;
@@ -74,6 +76,30 @@ public class Controller {
     public void experiment5() {
         System.out.println("***Experiment 5 - Delete movies with 'numVotes' equal to 1000, " +
                 "update B+ tree and report statistics.***");
+
+        ArrayList<Record> records = TsvReader.TsvToStringArray("data.tsv");
+        records.forEach(
+                record -> {
+                    Address address = disk.addRecord(record);
+                    addresses.add(address);
+                }
+        );
+
+        long startDelRecord = System.nanoTime();
+
+        //Brute force search through record
+        for(Address address: addresses)
+        {
+            Record record = address.getRecord(disk, address.getBlock(), address.getIndex());
+
+            if(record.getRecordData().getNumVotes() == 1000)
+            {
+                this.disk.deleteRecord(address);
+            }
+        }
+
+        long elapsedDelRecord = System.nanoTime() - startDelRecord;
+        timeTaken(elapsedDelRecord, "Total time taken for Delete movies with 'numVotes' equal to 1000 & Update B+ Tree: ");
     }
 
     public static void timeTaken(long elapsedTime, String msg) {
