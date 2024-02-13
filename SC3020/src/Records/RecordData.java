@@ -1,41 +1,30 @@
 package Records;
 
-import Utils.IntConverter;
+import Utils.CalculateSizeUtil;
 
-import java.nio.ByteBuffer;
-
+//Record data [18 bytes | tCosnt][4 bytes | averageRating][4 bytes | numVotes]
 public class RecordData {
-<<<<<<< Updated upstream
-    private char[] tConst; // 9 characters x 2 bytes -> 18 bytes
-    private byte averageRating; // 1 byte
-    private byte[] numVotes; // 4 bytes
-=======
     private char[] tConst; //18 bytes
-    private byte averageRating;//1 byte //change to float
-    private byte[] numVotes;//4 bytes
->>>>>>> Stashed changes
+    private float averageRating;//4 bytes
+    private int numVotes;//4 bytes
+
+    // Constructor
+    public RecordData(String tConst, float averageRating, int numVotes) {
+        this.tConst = tConst.toCharArray();
+        this.averageRating = averageRating;
+        this.numVotes = numVotes;
+    }
 
     // Getter
     public char[] gettConst() {
         return tConst;
     }
 
-    public void settConst(char[] tConst) {
-        this.tConst = tConst;
-    }
-
-    public byte getAverageRating() {
+    public float getAverageRating() {
         return averageRating;
     }
 
-    public byte[] getNumVotes() {
+    public int getNumVotes() {
         return numVotes;
-    }
-
-    // Constructor
-    public RecordData(String tConst, float averageRating, int numVotes) {
-        this.tConst = tConst.toCharArray();
-        this.averageRating = (byte) ((int) (averageRating * 10));
-        this.numVotes = IntConverter.IntToByte(numVotes, 4);
     }
 }

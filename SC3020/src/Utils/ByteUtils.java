@@ -32,4 +32,10 @@ public class ByteUtils {
         // Return -1 if all bits are set to 1
         return -1;
     }
+
+    // Return true if all bit is 1
+    public static boolean isBitAllOne(byte value, int numberOfBits) {
+        byte mask = (byte)((1 << numberOfBits) - 1);
+        return (value & mask) == mask;
+    }
 }
