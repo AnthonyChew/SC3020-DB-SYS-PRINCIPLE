@@ -237,25 +237,22 @@ public class LeafNode extends Node {
     public LeafNode getLeftSibling() {
         InternalNode parent = this.getParent();
 
+        for (int i = 0; i < parent.getParent().getNumKeys(); i ++) {
+            System.out.print(parent.getParent().getKey(i) + " ");
+        }
+
         while (parent.getParent() != null && parent.getParent().getChild(0) == parent) {
-            for (int i = 0; i < parent.getParent().getNumKeys(); i ++) {
-                System.out.print(parent.getParent().getKey(i) + " ");
-            }
-            System.out.println();
             parent = parent.getParent();
         }
 
         int index = parent.getParent().getChildIndex(parent);
+        System.out.println(index);
 
         // This means this leafnode is the leftmost leaf node and wont have any left siblings
         if (parent.getParent() == null) {
             return null;
         }
 
-        // Returns the rightmost leaf node of this parent
-        if (parent.getChild(index - 1) instanceof LeafNode) {
-            return (LeafNode) parent.getChild(index - 1);
-        }
-        return ((InternalNode) parent.getChild(index - 1)).getRightMostLeafNode();
+        return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
     }
 }
