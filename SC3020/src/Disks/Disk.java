@@ -13,18 +13,17 @@ public class Disk {
 
     private int currIndex = 0; // Current index
 
-    //Getter
-    public Block[] getBlocks() {
-        return blocks;
-    }
-
     //Constructor to calculate total disk size, max block amount and set all empty block in disk
-    public Disk()
-    {
+    public Disk() {
         TotalDiskSize = DiskSize * 1024 * 1024;
         MaxBlock = this.TotalDiskSize / Block.BlockSize;
 
         blocks = new Block[MaxBlock];
+    }
+
+    //Getter
+    public Block[] getBlocks() {
+        return blocks;
     }
 
     /*
@@ -32,40 +31,36 @@ public class Disk {
     if current block is full create a new block
     add a new record
     */
-    public Address addRecord(Record record)
-    {
-        if(currIndex > MaxBlock)
-        {
+    public Address addRecord(Record record) {
+        if (currIndex > MaxBlock) {
             return null;
-        }
-        else
-        {
-            if(blocks[currIndex] == null) blocks[currIndex] = new Block(); //to creat first block in disk
+        } else {
+            if (blocks[currIndex] == null) blocks[currIndex] = new Block(); //to creat first block in disk
 
-            if(blocks[currIndex].isFull())
-            {
+            if (blocks[currIndex].isFull()) {
                 currIndex++;
                 blocks[currIndex] = new Block();
             }
 
-            return blocks[currIndex].addRecord(currIndex ,record);
+            return blocks[currIndex].addRecord(currIndex, record);
         }
     }
 
-    //Delete record
-    public boolean deleteRecord(Address address)
-    {
+    // Overload deleteRecord with Address for B+ tree
+    public boolean deleteRecord(Address address) {
         //Get block from disk
-        Block block = blocks[address.getBlock()];
+        if (blocks[address.getBlock()] != null && !blocks[address.getBlock()].isEmpty()) {
+            Block block = blocks[address.getBlock()];
+            return block.deleteRecord(address.getIndex());
+        } else return false;
+    }
 
-        if(block.deleteRecord(address.getIndex()))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+    // Overload deleteRecord with block & record index for brute force
+    public boolean deleteRecord(int blockIdx, int recordIdx) {
+        if (blocks[blockIdx] != null && !blocks[blockIdx].isEmpty()) {
+            Block block = blocks[blockIdx];
+            return block.deleteRecord(recordIdx);
+        } else return false;
     }
 
     //Check through all blocks in disk to calculate
