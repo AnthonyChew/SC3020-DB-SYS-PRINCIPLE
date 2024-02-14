@@ -256,4 +256,14 @@ public class LeafNode extends Node {
 
         return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
     }
+
+    // This method will recursively go up the tree by checking if the parent is the leftmost children 
+    // of the grqndparent, until we hit the level of which it is false
+    // Then, update the key to the new leftmost key
+    // deleteAndBorrowFromLeft will need to call this
+    // deleteAndBorrowFromRight will need to call this if deleted key is at 0th index
+    // mergeWithLeft will need to call this
+    public void updateRoot(int newLeftMostKey) {
+
+    }
 }
