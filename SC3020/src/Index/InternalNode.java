@@ -157,16 +157,6 @@ public class InternalNode extends Node {
         this.getParent().addKey(newInternalNode.getSubtreeLB(), newInternalNode);
     }
 
-    public void deleteKey(int key, Node leftSibling, Node rightSibling) {
-        InternalNode leftInternalNode = (InternalNode) leftSibling;
-        InternalNode rightInternalNode = (InternalNode) leftSibling;
-
-        int index = 0;
-        while (index < this.numKeys && key > this.keys[index]) {
-            index++;
-        }
-    }
-
     public LeafNode getRightMostLeafNode() {
         Node target = this.getChild(this.numChildren - 1);
 
