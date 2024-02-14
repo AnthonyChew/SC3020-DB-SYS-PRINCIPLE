@@ -8,8 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import Blocks.Block;
-
 public class Controller {
     private Disk disk;
     private ArrayList<Address> addresses;
@@ -56,6 +54,8 @@ public class Controller {
                 .println("Number of levels: " + tree.calculateDepth() + " levels.");
         System.out.println("Contents of root node:");
         tree.printRootKeys();
+        BPlusTreeExperiments.experiment2();
+
     }
 
     public void experiment3() {
@@ -63,14 +63,16 @@ public class Controller {
                 " and report statistics.***");
         long startTimeBPlusTree = System.nanoTime();
         // TODO: Retrieve movies through B+ Tree
+        BPlusTreeExperiments.experiment3();
+
         long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
         timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
         // System.out.println("Total time taken for B+ Tree: " + elapsedTimeBPlusTree +
         // "ns.");
 
         long startTimeBruteForce = System.nanoTime();
-        // TODO: BRUTE FORCE LINEAR SCAN
-        ArrayList<Record> bruteforceResults = Experiments.experiment3(this.disk);
+        // Brute force linear scan
+        ArrayList<Record> bruteforceResults = BruteforceExperiments.experiment3(this.disk);
         long elapsedTimeBruteForce = System.nanoTime() - startTimeBruteForce;
         timeTaken(elapsedTimeBruteForce, "Total time taken for brute force: ");
         // System.out.println("Total time taken for brute force: " +
@@ -82,12 +84,14 @@ public class Controller {
                 " and report statistics.***");
         long startTimeBPlusTree = System.nanoTime();
         // TODO: Retrieve movies through B+ Tree
+        BPlusTreeExperiments.experiment4();
+
         long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
         timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
 
         long startTimeBruteForce = System.nanoTime();
-        // TODO: BRUTE FORCE LINEAR SCAN
-        ArrayList<Record> bruteforceResults = Experiments.experiment4(this.disk);
+        // Brute force linear scan
+        ArrayList<Record> bruteforceResults = BruteforceExperiments.experiment4(this.disk);
         long elapsedTimeBruteForce = System.nanoTime() - startTimeBruteForce;
         timeTaken(elapsedTimeBruteForce, "Total time taken for brute force: ");
     }
@@ -96,20 +100,31 @@ public class Controller {
         System.out.println("***Experiment 5 - Delete movies with 'numVotes' equal to 1000, " +
                 "update B+ tree and report statistics.***");
 
-        long startDelRecord = System.nanoTime();
+        // Create a duplicated disk and address table for brute force so that all
+        // records are still there
+        Disk dupDisk = new Disk();
+        ArrayList<Record> records = TsvReader.TsvToStringArray("data.tsv");
+        ArrayList<Address> dupAddress = new ArrayList<>();
+        records.forEach(
+                record -> {
+                    Address address = dupDisk.addRecord(record);
+                    dupAddress.add(address);
+                });
 
+        long startTimeBPlusTree = System.nanoTime();
+        // TODO: Retrieve movies through B+ Tree
+        BPlusTreeExperiments.experiment5();
+
+        long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
+        timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
+        // TODO: Before we start brute force, we need to "add" back the records that
+        // were deleted when we used B+ tree.
+        // How to do that?
+        long startTimeBruteForce = System.nanoTime();
         // Brute force search through record
-        for (Address address : addresses) {
-            Record record = address.getRecord(disk, address.getBlock(), address.getIndex());
-
-            if (record.getRecordData().getNumVotes() == 1000) {
-                this.disk.deleteRecord(address);
-            }
-        }
-
-        long elapsedDelRecord = System.nanoTime() - startDelRecord;
-        timeTaken(elapsedDelRecord,
-                "Total time taken for Delete movies with 'numVotes' equal to 1000 & Update B+ Tree: ");
+        BruteforceExperiments.experiment5(dupDisk);
+        long elapsedDelRecord = System.nanoTime() - startTimeBruteForce;
+        timeTaken(elapsedDelRecord, "Total time taken for brute force: ");
     }
 
     public static void timeTaken(long elapsedTime, String msg) {
