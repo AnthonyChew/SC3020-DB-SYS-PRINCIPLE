@@ -69,13 +69,13 @@ public class LeafNode extends Node {
             return;
         }
 
-        // Shift the keys and values to the right
+        // shift the keys and values to the right
         for (int i = this.numKeys - 1; i >= index; i--) {
             this.keys[i + 1] = this.keys[i];
             this.values[i + 1] = this.values[i];
         }
 
-        // Insert the key and value
+        // insert the key and value
         this.keys[index] = key;
         this.values[index] = new LinkedList<Address>();
         this.values[index].add(value);
@@ -112,11 +112,10 @@ public class LeafNode extends Node {
         // set new leaf node
         LeafNode newLeafNode = new LeafNode(this.getOrder());
         if (this.nextLeafNode != null) {
-            this.nextLeafNode.setNextLeafNode(newLeafNode);
+            newLeafNode.setNextLeafNode(this.nextLeafNode);
         }
         this.nextLeafNode = newLeafNode;
 
-        // NOTE: numKeys == order - 1
         // first half including mid -> start copying from mid over to new leaf
         if (index <= mid) {
             for (int i = mid, j = 0; i < this.numKeys; i++, j++) {
@@ -144,6 +143,10 @@ public class LeafNode extends Node {
             return;
         }
         this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
+    }
+
+    public boolean deleteKey(int key) {
+        int index = this.binarySearch(key);
     }
 
     public int getSubtreeLB() {
