@@ -4,7 +4,7 @@ import Records.Record;
 
 import java.util.ArrayList;
 
-public class BruteforceExperiments {
+public class Experiments {
     public static ArrayList<Record> experiment3(Disk disk) {
         int noOfAccessedBlocks = 0;
         Block[] blocks = disk.getBlocks();
