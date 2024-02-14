@@ -15,20 +15,28 @@ public abstract class Node {
         this.keys = new int[order - 1];
     }
 
-    public int getKey(int index) {
-        return keys[index];
-    }
-
     public int[] getKeys() {
         return keys;
     }
 
-    public int getOrder() {
-        return order;
+    public int getNumKeys() {
+        return this.numKeys;
     }
 
-    public int getNumKeys() {
-        return numKeys;
+    public void setNumKeys(int numKeys) {
+        this.numKeys = numKeys;
+    }
+
+    public int getKey(int index) {
+        return this.keys[index];
+    }
+
+    public void setKey(int index, int key) {
+        this.keys[index] = key;
+    }
+
+    public int getOrder() {
+        return order;
     }
 
     public InternalNode getParent() {
@@ -43,35 +51,15 @@ public abstract class Node {
         return this.numKeys == this.order - 1;
     }
 
-    public abstract int getSubtreeLB();
-
-    public Node insert(int key, int value) {
-        while (this instanceof InternalNode) {
-            Node child = this.findChild(key); // func in intenral node
-            Node newChild = child.insert(key, value); // new child created by splitting full child
-
-            if (newChild == null) {
-                return null;
-            }
-
-            InternalNode _this = (InternalNode) this;
-            boolean isNotFull = _this.addKey(newChild.getKey(0), newChild);
-            if (isNotFull) {
-                return null;
-            } else {
-                Node newInternalNode = _this.splitInternalNode(newChild.getKey(0), newChild);
-                return newInternalNode;
-            }
+    public void insert(int key, int value) {
+        if (this instanceof InternalNode) {
+            Node child = this.findChild(key);
+            child.insert(key, value);
+            return;
         }
 
         LeafNode _this = (LeafNode) this;
-        boolean isNotFull = _this.addKey(key, value);
-        if (isNotFull) {
-            return null;
-        } else {
-            Node newChild = _this.splitLeafNode(key, value);
-            return newChild;
-        }
+        _this.addKey(key, value);
     }
 
     public Node findChild(int key) {
@@ -83,4 +71,6 @@ public abstract class Node {
         }
         return _this.getChild(this.getNumKeys());
     }
+
+    public abstract int getSubtreeLB();
 }

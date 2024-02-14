@@ -1,5 +1,10 @@
 package Index;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+// minimum -> (order) // 2 keys
 public class LeafNode extends Node {
     private int[] values; // Will be replaced with the Address array instead
     private LeafNode nextLeafNode;
@@ -10,12 +15,16 @@ public class LeafNode extends Node {
         this.nextLeafNode = null;
     }
 
-    public int getNumKeys() {
-        return this.numKeys;
+    public int getValue(int index) {
+        return this.values[index];
     }
 
-    public int getKey(int index) {
-        return this.keys[index];
+    public void setValue(int index, int value) {
+        this.values[index] = value;
+    }
+
+    public int[] getValues() {
+        return this.values;
     }
 
     public LeafNode getNextLeafNode() {
@@ -27,15 +36,15 @@ public class LeafNode extends Node {
     }
 
     // value will be replaced with Address obj
-    public boolean addKey(int key, int value) {
-        // If the node is full, return false
+    public void addKey(int key, int value) {
         if (this.isFull()) {
-            return false;
+            this.splitLeafNode(key, value);
+            return;
         }
 
         // Find the index where the key should be inserted
         int index = 0;
-        while (index < this.numKeys && this.keys[index] < key) {
+        while (index < this.numKeys && key > this.keys[index]) {
             index++;
         }
 
@@ -49,8 +58,6 @@ public class LeafNode extends Node {
         this.keys[index] = key;
         this.values[index] = value;
         this.numKeys++;
-
-        return true;
     }
 
     // Search for the Address mapped to the given key
@@ -70,34 +77,53 @@ public class LeafNode extends Node {
         return -1;
     }
 
-    // Split the leaf node and return the new leaf node
-    public LeafNode splitLeafNode(int key, int value) {
-        int mid = this.numKeys / 2;
-        if (this.numKeys % 2 == 1) {
-            mid++;
-        }
-        LeafNode newLeaf = new LeafNode(super.getOrder());
-        this.nextLeafNode = newLeaf;
+    public void splitLeafNode(int key, int value) {
+        // index of min number of nodes in a leaf
+        int mid = (this.getOrder() / 2) - 1;
 
-        // Copy the second half of the keys and values to the new leaf
-        for (int i = mid; i < this.numKeys; i++) {
-            newLeaf.keys[i - mid] = this.keys[i];
-            newLeaf.values[i - mid] = this.values[i];
+        // find insert pos
+        int index = 0;
+        while (index < this.numKeys && key > this.keys[index]) {
+            index++;
         }
-        newLeaf.numKeys = this.numKeys - mid;
-        this.numKeys = mid;
 
-        // If the key belongs to the new leaf, insert it there
-        if (key >= newLeaf.keys[0]) {
-            newLeaf.addKey(key, value);
-        } else {
+        // set new leaf node
+        LeafNode newLeafNode = new LeafNode(this.getOrder());
+        if (this.nextLeafNode != null) {
+            this.nextLeafNode.setNextLeafNode(newLeafNode);
+        }
+        this.nextLeafNode = newLeafNode;
+
+        // NOTE: numKeys == order - 1
+        // first half including mid -> start copying from mid over to new leaf
+        if (index <= mid) {
+            for (int i = mid, j = 0; i < this.numKeys; i++, j++) {
+                newLeafNode.setKey(j, this.keys[i]);
+                newLeafNode.setValue(j, this.values[i]);
+            }
+            newLeafNode.setNumKeys(this.numKeys - mid);
+            this.numKeys = mid;
             this.addKey(key, value);
+        } else { // second half -> copy everything after mid over to new leaf
+            for (int i = mid + 1, j = 0; i < this.numKeys; i++, j++) {
+                newLeafNode.setKey(j, this.keys[i]);
+                newLeafNode.setValue(j, this.values[i]);
+            }
+            newLeafNode.setNumKeys(this.numKeys - (mid + 1));
+            this.numKeys = mid + 1;
+            newLeafNode.addKey(key, value);
         }
 
-        return newLeaf;
+        if (this.getParent() == null) {
+            InternalNode parent = new InternalNode(this.getOrder(), newLeafNode.getSubtreeLB(), this, newLeafNode);
+            this.parent = parent;
+            newLeafNode.setParent(parent);
+        } else {
+            this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
+        }
     }
 
     public int getSubtreeLB() {
-        return this.keys[0];
+        return this.getKey(0);
     }
 }

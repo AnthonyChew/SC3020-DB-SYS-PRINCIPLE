@@ -180,6 +180,9 @@ public class Main {
         tree.insert(2, 1);
         tree.insert(4, 1);
         tree.insert(10, 1);
+        tree.insert(15, 1);
+        tree.insert(20, 1);
+        tree.insert(17, 1);
 
         tree.printTree();
     }
