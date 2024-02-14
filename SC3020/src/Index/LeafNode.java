@@ -149,14 +149,14 @@ public class LeafNode extends Node {
     public boolean deleteKey(int key, LeafNode leftSibling) {
         LeafNode rightSibling = this.nextLeafNode;
 
-        int index = 0;
+        int index = -1;
         for (int i = 0; i < this.getNumKeys(); i ++) {
             if (this.keys[i] == key) {
                 index = i;
                 break;
             }
         }
-        if (this.keys[index] != key)
+        if (index == -1)
             return false;
 
         // case 1: simple delete
