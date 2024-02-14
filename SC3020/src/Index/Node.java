@@ -64,6 +64,34 @@ public abstract class Node {
         _this.addKey(key, value);
     }
 
+    public void delete(int key, Address value) {
+        if (this instanceof InternalNode) {
+            InternalNode _this = (InternalNode) this;
+            // At k - 1 level
+            if (_this.getChild(0) instanceof LeafNode) {
+                // The leaf node that contains the key
+                LeafNode child = (LeafNode) _this.findChild(key);
+
+                // Find the left sibling
+                // If not leftmost, then left sibling within the same parent at k - 1 level
+                int childIndex = _this.getChildIndex(child);
+                if (childIndex > 0) {
+                    LeafNode leftSibling = (LeafNode) _this.getChild(childIndex - 1);
+                    //child.deleteKey(key, leftSibling);
+                } 
+                // Otherwise, call getLeftSibling() to retrieve the left sibling from another parent
+                else {
+                    LeafNode leftSibling = child.getLeftSibling();
+                    //child.deleteKey(key, leftSibling);
+                }
+            }
+
+            // At other levels other than k - 1 and leaf node level
+            InternalNode child = (InternalNode) _this.findChild(key);
+            child.delete(key, value);
+        }
+    }
+
     public Node findChild(int key) {
         InternalNode _this = (InternalNode) this;
         for (int i = 0; i < this.getNumKeys(); i++) {

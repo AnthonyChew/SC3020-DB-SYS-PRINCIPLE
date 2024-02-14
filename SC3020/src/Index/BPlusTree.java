@@ -14,6 +14,10 @@ public class BPlusTree {
         this.n = order - 1;
     }
 
+    public Node getRoot() {
+        return this.root;
+    }
+
     public int getN() {
         return this.n;
     }

@@ -167,6 +167,26 @@ public class InternalNode extends Node {
         }
     }
 
+    public LeafNode getRightMostLeafNode() {
+        Node target = this.getChild(this.numChildren - 1);
+
+        // keep going right
+        while (target instanceof InternalNode) {
+            InternalNode _target = (InternalNode) target;
+            target = _target.getChild(_target.getNumChildren() - 1);
+        }
+        return (LeafNode) target;
+    }
+
+    public int getChildIndex(Node child) {
+        for (int i = 0; i < this.numChildren; i++) {
+            if (this.children[i] == child) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public int getSubtreeLB() {
         return this.children[0].getSubtreeLB();
     }
