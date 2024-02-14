@@ -117,9 +117,9 @@ public class Controller {
 
     public void experimentTest() {
         Node root = this.tree.getRoot();
-        Node child = root.findChild(700);
+        Node child = root.findChild(2263);
         while (child instanceof InternalNode) {
-            child = child.findChild(700);
+            child = child.findChild(2263);
         }
         for (int i = 0; i < child.getNumKeys(); i++) {
             System.out.println(((Integer) i).toString() + " " + child.getKey(i));
