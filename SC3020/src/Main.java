@@ -43,6 +43,9 @@ public class Main {
                 case 5:
                     controller.experiment5();
                     break;
+                case 6:
+                    controller.testDeleteChild();
+                    break;
                 case 0:
                     break;
             }

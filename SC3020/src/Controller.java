@@ -25,6 +25,7 @@ public class Controller {
         records.forEach(
                 record -> {
                     Address address = disk.addRecord(record);
+                    tree.insert(record.getRecordData().getNumVotes(), address);
                     addresses.add(address);
                 });
         // Report statistics:
@@ -40,22 +41,7 @@ public class Controller {
     public void experiment2() {
         System.out.println("***Experiment 2 - Build B+ Tree on 'numVotes' by inserting records sequentially, " +
                 "and report statistics.***");
-        ArrayList<Record> records = TsvReader.TsvToStringArray("data.tsv");
-        records.forEach(
-                record -> {
-                    Address address = disk.addRecord(record);
-                    tree.insert(record.getRecordData().getNumVotes(), address);
-                    addresses.add(address);
-                });
-        // tree.printTree();
-        System.out.println("Parameter n of B+ tree: " + tree.getN() + ".");
-        System.out.println("Number of nodes: " + tree.calculateNumberOfNodes() + " nodes.");
-        System.out
-                .println("Number of levels: " + tree.calculateDepth() + " levels.");
-        System.out.println("Contents of root node:");
-        tree.printRootKeys();
-        BPlusTreeExperiments.experiment2();
-
+        BPlusTreeExperiments.experiment2(tree);
     }
 
     public void experiment3() {
@@ -130,5 +116,16 @@ public class Controller {
     public static void timeTaken(long elapsedTime, String msg) {
         double elapsedTimeMS = elapsedTime / (1000000.0);
         System.out.println(msg + elapsedTimeMS + "ms.");
+    }
+
+    public void testDeleteChild() {
+        BPlusTree tree = new BPlusTree(3);
+
+        int keys[] = { 1, 4, 3, 2 };
+        for (int key : keys) {
+            tree.insert(key, new Address(0, 0));
+        }
+
+        tree.printTree();
     }
 }

@@ -69,7 +69,7 @@ public class InternalNode extends Node {
             rightChild.setParent(this);
         }
 
-        // update keys
+        // update keys as LB may change after insert
         this.updateKeys();
     }
 
@@ -77,10 +77,6 @@ public class InternalNode extends Node {
         for (int i = 0; i < this.numKeys; i++) {
             this.keys[i] = this.children[i + 1].getSubtreeLB();
         }
-    }
-
-    public void addKeyToNewInternalNode(int insertPos, int key, Node rightChild) {
-        return;
     }
 
     public void splitInternalNode(int key, Node rightChild) {
@@ -109,14 +105,13 @@ public class InternalNode extends Node {
             this.addKey(key, rightChild);
         } else { // second half -> copy everything after mid over to new node to insert
             for (int i = mid + 1, j = 0; i < this.numKeys; i++, j++) {
-
                 // insert at start -> leave a ptr space at index 0 for new child node
                 if (index == mid + 1) {
                     newInternalNode.setKey(j, this.keys[i]);
                     newInternalNode.setChild(j + 1, this.children[i + 1]);
                     newInternalNode.getChild(j + 1).setParent(newInternalNode);
                 } else { // insert in middle -> copy all except first key and find slot to insert
-                    if (i + 1 < this.numKeys) // mid will be promoted
+                    if (i + 1 < this.numKeys) // (mid + 1) will be promoted
                         newInternalNode.setKey(j, this.keys[i + 1]);
                     newInternalNode.setChild(j, this.children[i + 1]);
                     newInternalNode.getChild(j).setParent(newInternalNode);
@@ -157,8 +152,18 @@ public class InternalNode extends Node {
             parentNode.setKey(0, newInternalNode.getSubtreeLB());
             parentNode.setNumChildren(2);
             parentNode.setNumKeys(1);
-        } else {
-            this.getParent().addKey(newInternalNode.getSubtreeLB(), newInternalNode);
+            return;
+        }
+        this.getParent().addKey(newInternalNode.getSubtreeLB(), newInternalNode);
+    }
+
+    public void deleteKey(int key, Node leftSibling, Node rightSibling) {
+        InternalNode leftInternalNode = (InternalNode) leftSibling;
+        InternalNode rightInternalNode = (InternalNode) leftSibling;
+
+        int index = 0;
+        while (index < this.numKeys && key > this.keys[index]) {
+            index++;
         }
     }
 

@@ -1,6 +1,18 @@
+import java.util.ArrayList;
+
+import Disks.Address;
+import Index.BPlusTree;
+import Utils.TsvReader;
+
 public class BPlusTreeExperiments {
-    public static void experiment2 () {
-        // TODO: Add experiment 2.
+    public static void experiment2(BPlusTree tree) {
+        // tree.printTree();
+        System.out.println("Parameter n of B+ tree: " + tree.getN() + ".");
+        System.out.println("Number of nodes: " + tree.calculateNumberOfNodes() + " nodes.");
+        System.out
+                .println("Number of levels: " + tree.calculateDepth() + " levels.");
+        System.out.println("Contents of root node:");
+        tree.printRootKeys();
     }
 
     public static void experiment3() {

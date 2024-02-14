@@ -10,6 +10,7 @@ import Disks.Address;
 // minimum -> (order) // 2 keys
 public class LeafNode extends Node {
     // private int[] values; // Will be replaced with the Address array instead
+    private final int MIN_KEYS = this.getOrder() / 2;
     private List<Address>[] values;
     private LeafNode nextLeafNode;
 
@@ -145,8 +146,88 @@ public class LeafNode extends Node {
         this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
     }
 
-    public boolean deleteKey(int key) {
-        int index = this.binarySearch(key);
+    public boolean deleteKey(int key, LeafNode leftSibling) {
+        LeafNode rightSibling = this.nextLeafNode;
+
+        int index = 0;
+        while (index < this.numKeys && key > this.keys[index]) {
+            if (this.keys[index] == key)
+                break;
+            index++;
+        }
+        if (this.keys[index] != key)
+            return false;
+
+        // case 1: simple delete
+        if (this.numKeys - 1 >= this.MIN_KEYS) {
+            deleteAndShiftLeft(index);
+            this.numKeys--;
+            return true;
+        }
+
+        // case 2: borrow from left sibling
+        if (leftSibling != null && leftSibling.getNumKeys() - 1 >= this.MIN_KEYS) {
+            this.deleteAndBorrowFromLeft(index, leftSibling);
+        } else if (rightSibling != null && rightSibling.getNumKeys() - 1 >= this.MIN_KEYS) {
+            this.deleteAndBorrowFromRight(index, rightSibling);
+        } else if (leftSibling != null) { // case 3: merge with left sibling
+            this.mergeWithLeft(index, leftSibling);
+        } else if (rightSibling != null) { // case 4: merge with right sibling
+            this.mergeWithRight(index, leftSibling);
+        }
+
+        return true;
+    }
+
+    public void deleteAndShiftLeft(int deletePos) {
+        for (int i = deletePos; i < this.numKeys; i++) {
+            this.keys[i] = this.keys[i + 1];
+            this.values[i] = this.values[i + 1];
+        }
+    }
+
+    public void deleteAndShiftRight(int deletePos) {
+        for (int i = deletePos; i > 0; i--) {
+            this.keys[i] = this.keys[i - 1];
+            this.values[i] = this.values[i - 1];
+        }
+    }
+
+    public void deleteAndBorrowFromLeft(int deletePos, LeafNode leftSibling) {
+        this.deleteAndShiftRight(deletePos);
+        this.keys[0] = leftSibling.getKey(leftSibling.getNumKeys() - 1);
+        this.values[0] = leftSibling.getValue(leftSibling.getNumKeys());
+        leftSibling.setNumKeys(leftSibling.getNumKeys() - 1);
+    }
+
+    public void deleteAndBorrowFromRight(int deletePos, LeafNode rightSibling) {
+        this.deleteAndShiftLeft(deletePos);
+        this.keys[this.numKeys - 1] = rightSibling.getKey(0);
+        this.values[this.numKeys] = rightSibling.getValue(0);
+        rightSibling.deleteAndShiftLeft(0);
+        rightSibling.setNumKeys(rightSibling.getNumKeys() - 1);
+    }
+
+    public void mergeWithLeft(int deletePos, LeafNode leftSibling) {
+        this.deleteAndShiftLeft(deletePos);
+        for (int i = 0; i < this.numKeys; i++) {
+            leftSibling.setKey(leftSibling.getNumKeys() + i, this.keys[i]);
+            leftSibling.setValue(leftSibling.getNumKeys() + i, this.values[i]);
+        }
+        leftSibling.setNextLeafNode(this.nextLeafNode);
+        leftSibling.setNumKeys(leftSibling.getNumKeys() + this.numKeys);
+        this.setParent(null);
+    }
+
+    public void mergeWithRight(int deletePos, LeafNode rightSibling) {
+        this.deleteAndShiftLeft(deletePos);
+        for (int i = 0; i < rightSibling.getNumKeys(); i++) {
+            this.keys[this.numKeys + i] = rightSibling.getKey(i);
+            this.values[this.numKeys + i] = rightSibling.getValue(i);
+        }
+        this.nextLeafNode = rightSibling.getNextLeafNode();
+        this.numKeys += rightSibling.getNumKeys();
+        rightSibling.setParent(null);
     }
 
     public int getSubtreeLB() {
