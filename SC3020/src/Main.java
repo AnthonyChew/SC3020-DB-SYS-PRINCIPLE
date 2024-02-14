@@ -1,9 +1,5 @@
-import Blocks.Block;
 import Disks.Address;
 import Disks.Disk;
-import Records.Record;
-import Records.RecordData;
-import Records.RecordHeader;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -51,24 +47,6 @@ public class Main {
                     break;
             }
         } while (choice != 0);
-    }
-
-    public static void testBPlusTree() {
-        int keys[] = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        int values[] = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-
-        BPlusTree tree = new BPlusTree(3);
-        tree.insert(5, 4);
-        tree.insert(3, 3);
-        tree.insert(1, 2);
-        tree.insert(2, 1);
-        tree.insert(4, 1);
-        tree.insert(10, 1);
-        tree.insert(15, 1);
-        tree.insert(20, 1);
-        tree.insert(17, 1);
-
-        tree.printTree();
     }
 
 }

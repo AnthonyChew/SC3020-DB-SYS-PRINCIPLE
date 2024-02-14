@@ -96,23 +96,28 @@ public class InternalNode extends Node {
         // first half including mid -> start copying from mid over to new node
         if (index <= mid) {
             for (int i = mid, j = 0; i < this.getNumKeys(); i++, j++) {
-                newInternalNode.setKey(j, this.keys[i]);
+                if (i + 1 < this.numKeys) // mid will be promoted
+                    newInternalNode.setKey(j, this.keys[i + 1]);
                 newInternalNode.setChild(j, this.children[i + 1]);
                 newInternalNode.getChild(j).setParent(newInternalNode);
             }
-            newInternalNode.setNumKeys(this.numKeys - mid);
+
+            newInternalNode.setNumKeys(this.numKeys - mid - 1);
             newInternalNode.setNumChildren(this.numKeys - mid);
             this.numKeys = mid;
             this.numChildren = mid + 1;
             this.addKey(key, rightChild);
-        } else { // [SPECIAL] second half -> copy everything after mid over to new node to insert
+        } else { // second half -> copy everything after mid over to new node to insert
             for (int i = mid + 1, j = 0; i < this.numKeys; i++, j++) {
-                newInternalNode.setKey(j, this.keys[i]);
+
                 // insert at start -> leave a ptr space at index 0 for new child node
                 if (index == mid + 1) {
+                    newInternalNode.setKey(j, this.keys[i]);
                     newInternalNode.setChild(j + 1, this.children[i + 1]);
                     newInternalNode.getChild(j + 1).setParent(newInternalNode);
-                } else { // insert in middle -> copy all and find slot to insert
+                } else { // insert in middle -> copy all except first key and find slot to insert
+                    if (i + 1 < this.numKeys) // mid will be promoted
+                        newInternalNode.setKey(j, this.keys[i + 1]);
                     newInternalNode.setChild(j, this.children[i + 1]);
                     newInternalNode.getChild(j).setParent(newInternalNode);
                 }
@@ -121,24 +126,25 @@ public class InternalNode extends Node {
             // first spot
             if (index == mid + 1) {
                 newInternalNode.setChild(0, rightChild);
+                newInternalNode.setNumKeys(this.numKeys - (mid + 1));
             } else if (index == this.numKeys) { // last spot
                 newInternalNode.setKey(this.numKeys - (mid + 1) - 1, key);
                 newInternalNode.setChild(this.numKeys - (mid + 1), rightChild);
                 newInternalNode.setNumKeys(this.numKeys - (mid + 1));
             } else { // middle -> shift
-                for (int i = index - (mid + 1); i < this.numKeys - (mid + 1); i++) {
+                for (int i = index - (mid + 1) - 1; i < this.numKeys - (mid + 1) - 1; i++) {
                     newInternalNode.setKey(i + 1, newInternalNode.getKey(i));
                     newInternalNode.setChild(i + 2, newInternalNode.getChild(i + 1));
                 }
-                newInternalNode.setKey(index - (mid + 1), key);
-                newInternalNode.setChild(index - (mid + 1) + 1, rightChild);
-                newInternalNode.setNumKeys(this.numKeys - (mid + 1) + 1);
+                newInternalNode.setKey(index - (mid + 1) - 1, key);
+                newInternalNode.setChild(index - (mid + 1), rightChild);
+                newInternalNode.setNumKeys(this.numKeys - (mid + 1));
             }
             rightChild.setParent(newInternalNode);
 
+            newInternalNode.setNumChildren(newInternalNode.getNumKeys() + 1);
             this.numKeys = mid + 1;
             this.numChildren = mid + 2;
-            newInternalNode.setNumChildren(this.numKeys - (mid + 1) + 2);
         }
 
         if (this.getParent() == null) {

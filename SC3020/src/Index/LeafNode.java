@@ -2,28 +2,33 @@ package Index;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
+import Disks.Address;
 
 // minimum -> (order) // 2 keys
 public class LeafNode extends Node {
-    private int[] values; // Will be replaced with the Address array instead
+    // private int[] values; // Will be replaced with the Address array instead
+    private List<Address>[] values;
     private LeafNode nextLeafNode;
 
     public LeafNode(int order) {
         super(order);
-        this.values = new int[order - 1];
+        this.values = new List[order - 1];
+        Arrays.fill(this.values, new LinkedList<Address>());
         this.nextLeafNode = null;
     }
 
-    public int getValue(int index) {
+    public List<Address> getValue(int index) {
         return this.values[index];
     }
 
-    public void setValue(int index, int value) {
+    public void setValue(int index, List<Address> value) {
         this.values[index] = value;
     }
 
-    public int[] getValues() {
+    public List<Address>[] getValues() {
         return this.values;
     }
 
@@ -35,17 +40,33 @@ public class LeafNode extends Node {
         this.nextLeafNode = nextLeafNode;
     }
 
-    // value will be replaced with Address obj
-    public void addKey(int key, int value) {
-        if (this.isFull()) {
+    public boolean containsKey(int key) {
+        for (int i = 0; i < this.numKeys; i++) {
+            if (this.keys[i] == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addKey(int key, Address value) {
+        if (this.isFull() && !this.containsKey(key)) {
             this.splitLeafNode(key, value);
             return;
         }
 
-        // Find the index where the key should be inserted
+        // find the index where the key should be inserted
         int index = 0;
         while (index < this.numKeys && key > this.keys[index]) {
+            if (key == this.keys[index])
+                break;
             index++;
+        }
+
+        // duplicate -> add to linked list
+        if (this.keys[index] == key) {
+            this.values[index].add(value);
+            return;
         }
 
         // Shift the keys and values to the right
@@ -56,7 +77,8 @@ public class LeafNode extends Node {
 
         // Insert the key and value
         this.keys[index] = key;
-        this.values[index] = value;
+        this.values[index] = new LinkedList<Address>();
+        this.values[index].add(value);
         this.numKeys++;
     }
 
@@ -77,7 +99,7 @@ public class LeafNode extends Node {
         return -1;
     }
 
-    public void splitLeafNode(int key, int value) {
+    public void splitLeafNode(int key, Address value) {
         // index of min number of nodes in a leaf
         int mid = (this.getOrder() / 2) - 1;
 
@@ -114,13 +136,14 @@ public class LeafNode extends Node {
             newLeafNode.addKey(key, value);
         }
 
+        // create parent if no parent
         if (this.getParent() == null) {
             InternalNode parent = new InternalNode(this.getOrder(), newLeafNode.getSubtreeLB(), this, newLeafNode);
             this.parent = parent;
             newLeafNode.setParent(parent);
-        } else {
-            this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
+            return;
         }
+        this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
     }
 
     public int getSubtreeLB() {

@@ -1,5 +1,7 @@
 package Index;
 
+import Disks.Address;
+
 // An abstract class necessary so that InternalNode and LeafNode can be
 // passed in as Node objects to the InternalNode constructor
 public abstract class Node {
@@ -51,7 +53,7 @@ public abstract class Node {
         return this.numKeys == this.order - 1;
     }
 
-    public void insert(int key, int value) {
+    public void insert(int key, Address value) {
         if (this instanceof InternalNode) {
             Node child = this.findChild(key);
             child.insert(key, value);

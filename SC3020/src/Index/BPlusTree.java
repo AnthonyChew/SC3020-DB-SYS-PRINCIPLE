@@ -3,47 +3,101 @@ package Index;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import Disks.Address;
+
 public class BPlusTree {
     private Node root;
+    private int n;
 
     public BPlusTree(int order) {
         this.root = new LeafNode(order);
+        this.n = order - 1;
     }
 
-    public void insert(int key, int value) {
-        this.root.insert(key, value);
-        if (this.root.getParent() != null) {
-            this.root = this.root.getParent();
-        }
+    public int getN() {
+        return this.n;
     }
 
-    // Not used in the current implementation
-    public LeafNode findInsertLeafNode(int key) {
-        Node node = this.root;
-        while (node instanceof InternalNode) {
-            InternalNode internal = (InternalNode) node;
-            int index = 0;
-            while (index < internal.getNumKeys() && internal.getKey(index) <= key) {
-                index++;
+    public void insert(int key, Address value) {
+        try {
+            this.root.insert(key, value);
+            if (this.root.getParent() != null) {
+                this.root = this.root.getParent();
             }
-            node = internal.getChild(index);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            System.exit(1);
         }
-        return (LeafNode) node;
     }
 
-    // public void traverseTree(Node root) {
-    // if (root instanceof LeafNode) {
-    // LeafNode leaf = (LeafNode) root;
-    // for (int i = 0; i < leaf.getNumKeys(); i++) {
-    // System.out.print(leaf.getKey(i) + " ");
-    // }
-    // } else {
-    // InternalNode internal = (InternalNode) root;
-    // for (int i = 0; i < internal.getNumChildren(); i++) {
-    // traverseTree(internal.getChild(i));
-    // }
-    // }
-    // }
+    public void printRootKeys() {
+        if (root == null) {
+            return;
+        }
+
+        for (int i = 0; i < root.getNumKeys(); i++) {
+            System.out.print(root.getKey(i) + " ");
+        }
+        System.out.println();
+        System.out.println();
+    }
+
+    public int calculateNumberOfNodes() {
+        if (root == null) {
+            return 0;
+        }
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        int count = 0;
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+
+            for (int i = 0; i < levelSize; i++) {
+                Node node = queue.poll();
+                count++;
+
+                if (node instanceof InternalNode) {
+                    InternalNode internal = (InternalNode) node;
+                    for (int j = 0; j < internal.getNumChildren(); j++) {
+                        queue.add(internal.getChild(j));
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public int calculateDepth() {
+        if (root == null) {
+            return 0;
+        }
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        int depth = 0;
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+
+            for (int i = 0; i < levelSize; i++) {
+                Node node = queue.poll();
+
+                if (node instanceof LeafNode)
+                    continue;
+
+                InternalNode internal = (InternalNode) node;
+                for (int j = 0; j < internal.getNumChildren(); j++) {
+                    queue.add(internal.getChild(j));
+                }
+            }
+            depth++;
+        }
+
+        return depth;
+    }
 
     public void traverseTree(Node root) {
         if (root == null) {
@@ -73,7 +127,7 @@ public class BPlusTree {
                     }
                 }
             }
-            System.out.println(); // Print a new line after each level
+            System.out.println();
         }
     }
 

@@ -3,6 +3,7 @@ package UnitTest;
 import Blocks.Block;
 import Disks.Address;
 import Disks.Disk;
+import Index.BPlusTree;
 import Records.Record;
 import Records.RecordData;
 import Records.RecordHeader;
@@ -19,8 +20,7 @@ public class Test1 {
         RecordData recordData = new RecordData("tt0000001", 5.6f, 1645);
         record = new Record(
                 new RecordHeader(0),
-                recordData
-        );
+                recordData);
         record.printRecord();
     }
 
@@ -39,11 +39,13 @@ public class Test1 {
         }
 
         if (block.deleteRecord(5)) {
-            //System.out.println("Blocks.Block 5 deleted! Blocks.Block size: " + block.getRecords().size() );
+            // System.out.println("Blocks.Block 5 deleted! Blocks.Block size: " +
+            // block.getRecords().size() );
 
-            //block.addRecord(record);
+            // block.addRecord(record);
 
-            System.out.println("Inserted to empty block! Blocks.Block full: " + block.isFull() + "\nCurrent index : " + block.getCurrIndex());
+            System.out.println("Inserted to empty block! Blocks.Block full: " + block.isFull() + "\nCurrent index : "
+                    + block.getCurrIndex());
 
             block.addRecord(0, record);
 
@@ -68,8 +70,10 @@ public class Test1 {
 
         while (!cBlock.isEmpty()) {
             int indexDel;
-            if (allIndex.size() != 0) indexDel = rnd.nextInt(allIndex.size());
-            else indexDel = 0;
+            if (allIndex.size() != 0)
+                indexDel = rnd.nextInt(allIndex.size());
+            else
+                indexDel = 0;
             System.out.println("Deleting block " + indexDel);
 
             cBlock.deleteRecord(indexDel);
@@ -77,7 +81,7 @@ public class Test1 {
 
             for (Record r : cBlock.getRecords()) {
                 if (r != null) {
-                    //r.printRecord();
+                    // r.printRecord();
                 } else {
                     System.out.println("Blocks.Block is empty");
                 }
@@ -94,12 +98,12 @@ public class Test1 {
         Random rnd = new Random();
 
         int i;
-        //fill disk with records
+        // fill disk with records
         for (i = 0; i < 18; i++) {
             Addresss.add(disk.addRecord(record));
         }
 
-        //System.out.println("Current block amount : " + disk.getBlockCount());
+        // System.out.println("Current block amount : " + disk.getBlockCount());
 
         for (int j = 0; j < 18; j++) {
 
@@ -113,5 +117,19 @@ public class Test1 {
 
         System.out.println("Current block amount : " + disk.getBlocks().length);
 
+    }
+
+    public void testBPlusTree() {
+        int keys[] = new int[] { 25, 16, 17, 60, 9, 21, 18, 12, 17, 16, 62, 14, 159 };
+
+        BPlusTree tree = new BPlusTree(25);
+        Address addr = new Address(3, 6);
+
+        for (int key : keys) {
+            System.out.println("Inserting key: " + key);
+            tree.insert(key, addr);
+        }
+
+        tree.printTree();
     }
 }
