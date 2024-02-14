@@ -80,6 +80,18 @@ public class Controller {
     public void experiment5() {
         System.out.println("***Experiment 5 - Delete movies with 'numVotes' equal to 1000, " +
                 "update B+ tree and report statistics.***");
+        
+        //Create a duplicated disk and address table for brute force so that all records are still there
+        Disk dupDisk = new Disk();
+        ArrayList<Record> records = TsvReader.TsvToStringArray("data.tsv");
+        ArrayList<Address> dupAddress = new ArrayList<>(); 
+        records.forEach(
+                record -> {
+                    Address address = dupDisk.addRecord(record);
+                    dupAddress.add(address);
+                }
+        );
+
         long startTimeBPlusTree = System.nanoTime();
         // TODO: Retrieve movies through B+ Tree
         BPlusTreeExperiments.experiment5();
@@ -90,7 +102,7 @@ public class Controller {
         //  How to do that?
         long startTimeBruteForce = System.nanoTime();
         //Brute force search through record
-        BruteforceExperiments.experiment5(disk);
+        BruteforceExperiments.experiment5(dupDisk);
         long elapsedDelRecord = System.nanoTime() - startTimeBruteForce;
         timeTaken(elapsedDelRecord, "Total time taken for brute force: ");
     }
