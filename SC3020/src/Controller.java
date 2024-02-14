@@ -52,7 +52,7 @@ public class Controller {
 
         long startTimeBruteForce = System.nanoTime();
         // TODO: BRUTE FORCE LINEAR SCAN
-        ArrayList<Record> bruteforceResults = BruteforceExperiments.experiment3(this.disk);
+        ArrayList<Record> bruteforceResults = Experiments.experiment3(this.disk);
         long elapsedTimeBruteForce = System.nanoTime() - startTimeBruteForce;
         timeTaken(elapsedTimeBruteForce, "Total time taken for brute force: ");
 //        System.out.println("Total time taken for brute force: " + elapsedTimeBruteForce + "ns.");
@@ -68,7 +68,7 @@ public class Controller {
 
         long startTimeBruteForce = System.nanoTime();
         // TODO: BRUTE FORCE LINEAR SCAN
-        ArrayList<Record> bruteforceResults = BruteforceExperiments.experiment4(this.disk);
+        ArrayList<Record> bruteforceResults = Experiments.experiment4(this.disk);
         long elapsedTimeBruteForce = System.nanoTime() - startTimeBruteForce;
         timeTaken(elapsedTimeBruteForce, "Total time taken for brute force: ");
     }
