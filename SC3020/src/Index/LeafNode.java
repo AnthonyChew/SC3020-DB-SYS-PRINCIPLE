@@ -150,10 +150,11 @@ public class LeafNode extends Node {
         LeafNode rightSibling = this.nextLeafNode;
 
         int index = 0;
-        while (index < this.numKeys && key > this.keys[index]) {
-            if (this.keys[index] == key)
+        for (int i = 0; i < this.getNumKeys(); i ++) {
+            if (this.keys[i] == key) {
+                index = i;
                 break;
-            index++;
+            }
         }
         if (this.keys[index] != key)
             return false;
