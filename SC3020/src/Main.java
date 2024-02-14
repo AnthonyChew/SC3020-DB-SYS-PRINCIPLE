@@ -35,7 +35,8 @@ public class Main {
                     controller.experiment2();
                     break;
                 case 3:
-                    controller.experiment3();
+                    controller.experimentTest();
+                    //controller.experiment3();
                     break;
                 case 4:
                     controller.experiment4();

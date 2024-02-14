@@ -1,6 +1,9 @@
 import Disks.Address;
 import Disks.Disk;
 import Index.BPlusTree;
+import Index.InternalNode;
+import Index.LeafNode;
+import Index.Node;
 import Records.Record;
 import Utils.TsvReader;
 
@@ -110,6 +113,23 @@ public class Controller {
         long elapsedDelRecord = System.nanoTime() - startDelRecord;
         timeTaken(elapsedDelRecord,
                 "Total time taken for Delete movies with 'numVotes' equal to 1000 & Update B+ Tree: ");
+    }
+
+    public void experimentTest() {
+        Node root = this.tree.getRoot();
+        Node child = root.findChild(700);
+        while (child instanceof InternalNode) {
+            child = child.findChild(700);
+        }
+        for (int i = 0; i < child.getNumKeys(); i++) {
+            System.out.println(((Integer) i).toString() + " " + child.getKey(i));
+        }
+        System.out.println();
+        LeafNode leftSibling = ((LeafNode) child).getLeftSibling();
+        System.out.println(leftSibling);
+        for (int i = 0; i < leftSibling.getNumKeys(); i++) {
+            System.out.print(leftSibling.getKey(i) + " ");
+        }
     }
 
     public static void timeTaken(long elapsedTime, String msg) {
