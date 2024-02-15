@@ -27,7 +27,7 @@ public class Test1 {
     public static void testBlockFull() {
         System.out.println("\n\n################Blocks.Block insert test################");
         while (!block.isFull()) {
-            Address adr = block.addRecord(0, record);
+            block.addRecord(0, record);
         }
         System.out.println("Blocks.Block is full");
     }
@@ -39,10 +39,6 @@ public class Test1 {
         }
 
         if (block.deleteRecord(5)) {
-            //System.out.println("Blocks.Block 5 deleted! Blocks.Block size: " + block.getRecords().size() );
-
-            //block.addRecord(record);
-
             System.out.println("Inserted to empty block! Blocks.Block full: " + block.isFull() + "\nCurrent index : " + block.getCurrIndex());
 
             block.addRecord(0, record);
@@ -61,7 +57,7 @@ public class Test1 {
         int index = 0;
 
         while (!cBlock.isFull()) {
-            Address adr = cBlock.addRecord(0, record);
+            cBlock.addRecord(0, record);
             allIndex.add(index);
             index++;
         }
