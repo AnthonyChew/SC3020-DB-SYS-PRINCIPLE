@@ -112,9 +112,7 @@ public class LeafNode extends Node {
 
         // set new leaf node
         LeafNode newLeafNode = new LeafNode(this.getOrder());
-        if (this.nextLeafNode != null) {
-            newLeafNode.setNextLeafNode(this.nextLeafNode);
-        }
+        newLeafNode.setNextLeafNode(this.nextLeafNode);
         this.nextLeafNode = newLeafNode;
 
         // first half including mid -> start copying from mid over to new leaf
@@ -146,18 +144,21 @@ public class LeafNode extends Node {
         this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
     }
 
-    public boolean deleteKey(int key, LeafNode leftSibling) {
-        LeafNode rightSibling = this.nextLeafNode;
+    public boolean deleteKey(int key, Node leftSibling, Node rightSibling) {
+        LeafNode _leftSibling = (LeafNode) leftSibling;
+        LeafNode _rightSibling = (LeafNode) rightSibling;
 
-        int index = 0;
-        for (int i = 0; i < this.getNumKeys(); i ++) {
+        int index = -1;
+        for (int i = 0; i < this.numKeys; i++) {
             if (this.keys[i] == key) {
                 index = i;
                 break;
             }
         }
-        if (this.keys[index] != key)
+        if (index == -1)
             return false;
+
+        // TODO: Loop through address and delete record in disk as well
 
         // case 1: simple delete
         if (this.numKeys - 1 >= this.MIN_KEYS) {
@@ -168,20 +169,22 @@ public class LeafNode extends Node {
 
         // case 2: borrow from left sibling
         if (leftSibling != null && leftSibling.getNumKeys() - 1 >= this.MIN_KEYS) {
-            this.deleteAndBorrowFromLeft(index, leftSibling);
+            this.deleteAndBorrowFromLeft(index, _leftSibling);
         } else if (rightSibling != null && rightSibling.getNumKeys() - 1 >= this.MIN_KEYS) {
-            this.deleteAndBorrowFromRight(index, rightSibling);
+            this.deleteAndBorrowFromRight(index, _rightSibling);
         } else if (leftSibling != null) { // case 3: merge with left sibling
-            this.mergeWithLeft(index, leftSibling);
+            this.mergeWithLeft(index, _leftSibling);
         } else if (rightSibling != null) { // case 4: merge with right sibling
-            this.mergeWithRight(index, leftSibling);
+            this.mergeWithRight(index, _rightSibling);
+        } else if (leftSibling == null && rightSibling == null) {
+            this.numKeys--;
         }
 
         return true;
     }
 
     public void deleteAndShiftLeft(int deletePos) {
-        for (int i = deletePos; i < this.numKeys; i++) {
+        for (int i = deletePos; i < this.numKeys - 1; i++) {
             this.keys[i] = this.keys[i + 1];
             this.values[i] = this.values[i + 1];
         }
@@ -211,49 +214,54 @@ public class LeafNode extends Node {
 
     public void mergeWithLeft(int deletePos, LeafNode leftSibling) {
         this.deleteAndShiftLeft(deletePos);
+        this.numKeys--;
         for (int i = 0; i < this.numKeys; i++) {
             leftSibling.setKey(leftSibling.getNumKeys() + i, this.keys[i]);
             leftSibling.setValue(leftSibling.getNumKeys() + i, this.values[i]);
         }
         leftSibling.setNextLeafNode(this.nextLeafNode);
         leftSibling.setNumKeys(leftSibling.getNumKeys() + this.numKeys);
+        this.numKeys = 0;
         this.setParent(null);
     }
 
     public void mergeWithRight(int deletePos, LeafNode rightSibling) {
         this.deleteAndShiftLeft(deletePos);
+        this.numKeys--;
         for (int i = 0; i < rightSibling.getNumKeys(); i++) {
             this.keys[this.numKeys + i] = rightSibling.getKey(i);
             this.values[this.numKeys + i] = rightSibling.getValue(i);
         }
         this.nextLeafNode = rightSibling.getNextLeafNode();
         this.numKeys += rightSibling.getNumKeys();
+        rightSibling.setNumKeys(0);
         rightSibling.setParent(null);
-    }
-
-    public int getSubtreeLB() {
-        return this.getKey(0);
     }
 
     public LeafNode getLeftSibling() {
         InternalNode parent = this.getParent();
 
-        for (int i = 0; i < parent.getParent().getNumKeys(); i ++) {
-            System.out.print(parent.getParent().getKey(i) + " ");
-        }
+        // for (int i = 0; i < parent.getParent().getNumKeys(); i++) {
+        // System.out.print(parent.getParent().getKey(i) + " ");
+        // }
 
         while (parent.getParent() != null && parent.getParent().getChild(0) == parent) {
             parent = parent.getParent();
         }
 
-        int index = parent.getParent().getChildIndex(parent);
-        System.out.println(index);
-
-        // This means this leafnode is the leftmost leaf node and wont have any left siblings
+        // This means this leafnode is the leftmost leaf node and wont have any left
+        // siblings
         if (parent.getParent() == null) {
             return null;
         }
 
+        int index = parent.getParent().getChildIndex(parent);
+        System.out.println(index);
+
         return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
+    }
+
+    public int getSubtreeLB() {
+        return this.getKey(0);
     }
 }

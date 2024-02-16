@@ -34,6 +34,23 @@ public class BPlusTree {
         }
     }
 
+    public void delete(int key) {
+        // try {
+        // this.root.delete(key);
+        // if (this.root.getNumKeys() == 0) {
+        // this.root = ((InternalNode) this.root).getChild(0);
+        // }
+        // } catch (Exception e) {
+        // System.out.println("Error: " + e);
+        // System.exit(1);
+        // }
+        this.root.delete(key);
+        if (this.root.getNumKeys() == 0) {
+            this.root = ((InternalNode) this.root).getChild(0);
+            this.root.setParent(null);
+        }
+    }
+
     public void printRootKeys() {
         if (root == null) {
             return;

@@ -147,5 +147,11 @@ public class Controller {
         }
 
         tree.printTree();
+        tree.delete(3);
+        tree.printTree();
+        tree.delete(2);
+        tree.printTree();
+        tree.delete(4);
+        tree.printTree();
     }
 }

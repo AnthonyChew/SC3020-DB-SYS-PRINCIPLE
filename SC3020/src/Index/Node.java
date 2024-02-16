@@ -9,6 +9,7 @@ public abstract class Node {
     protected int[] keys;
     protected int numKeys;
     protected InternalNode parent;
+    protected int nodeIndex;
 
     public Node(int order) {
         this.order = order;
@@ -27,6 +28,14 @@ public abstract class Node {
 
     public void setNumKeys(int numKeys) {
         this.numKeys = numKeys;
+    }
+
+    public int getNodeIndex() {
+        return nodeIndex;
+    }
+
+    public void setNodeIndex(int nodeIndex) {
+        this.nodeIndex = nodeIndex;
     }
 
     public int getKey(int index) {
@@ -64,33 +73,40 @@ public abstract class Node {
         _this.addKey(key, value);
     }
 
-    public void delete(int key) {
+    public boolean delete(int key) {
+        boolean deleted = false;
         if (this instanceof InternalNode) {
             InternalNode _this = (InternalNode) this;
+
             // At k - 1 level
             if (_this.getChild(0) instanceof LeafNode) {
                 // The leaf node that contains the key
                 LeafNode child = (LeafNode) _this.findChild(key);
+                LeafNode leftSibling;
 
                 // Find the left sibling
                 // If not leftmost, then left sibling within the same parent at k - 1 level
-                int childIndex = _this.getChildIndex(child);
+                int childIndex = child.getNodeIndex();
                 if (childIndex > 0) {
-                    LeafNode leftSibling = (LeafNode) _this.getChild(childIndex - 1);
-                    // child.deleteKey(key, leftSibling);
+                    leftSibling = (LeafNode) _this.getChild(childIndex - 1);
+                } else { // Otherwise, call getLeftSibling() to retrieve the left sibling from another
+                         // parent
+                    leftSibling = child.getLeftSibling();
                 }
-                // Otherwise, call getLeftSibling() to retrieve the left sibling from another
-                // parent
-                else {
-                    LeafNode leftSibling = child.getLeftSibling();
-                    // child.deleteKey(key, leftSibling);
-                }
+                deleted = child.deleteKey(key, leftSibling, child.getNextLeafNode());
+                _this.rebalance();
+                return deleted;
             }
 
             // At other levels other than k - 1 and leaf node level
             InternalNode child = (InternalNode) _this.findChild(key);
-            child.delete(key);
+            deleted = child.delete(key);
+            _this.rebalance();
+            return deleted;
         }
+
+        LeafNode _this = (LeafNode) this;
+        return _this.deleteKey(key, null, null);
     }
 
     public Node findChild(int key) {
