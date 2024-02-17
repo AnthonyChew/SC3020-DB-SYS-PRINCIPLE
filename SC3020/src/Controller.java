@@ -102,7 +102,7 @@ public class Controller {
 
         long startTimeBPlusTree = System.nanoTime();
         // TODO: Retrieve movies through B+ Tree
-        BPlusTreeExperiments.experiment5();
+        BPlusTreeExperiments.experiment5(tree);
 
         long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
         timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");

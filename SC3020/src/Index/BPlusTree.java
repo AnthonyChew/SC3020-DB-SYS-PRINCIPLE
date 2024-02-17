@@ -23,27 +23,13 @@ public class BPlusTree {
     }
 
     public void insert(int key, Address value) {
-        try {
-            this.root.insert(key, value);
-            if (this.root.getParent() != null) {
-                this.root = this.root.getParent();
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-            System.exit(1);
+        this.root.insert(key, value);
+        if (this.root.getParent() != null) {
+            this.root = this.root.getParent();
         }
     }
 
     public void delete(int key) {
-        // try {
-        // this.root.delete(key);
-        // if (this.root.getNumKeys() == 0) {
-        // this.root = ((InternalNode) this.root).getChild(0);
-        // }
-        // } catch (Exception e) {
-        // System.out.println("Error: " + e);
-        // System.exit(1);
-        // }
         this.root.delete(key);
         if (this.root.getNumKeys() == 0) {
             this.root = ((InternalNode) this.root).getChild(0);
