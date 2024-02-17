@@ -137,21 +137,4 @@ public class Controller {
         double elapsedTimeMS = elapsedTime / (1000000.0);
         System.out.println(msg + elapsedTimeMS + "ms.");
     }
-
-    public void testDeleteChild() {
-        BPlusTree tree = new BPlusTree(3);
-
-        int keys[] = { 1, 4, 3, 2 };
-        for (int key : keys) {
-            tree.insert(key, new Address(0, 0));
-        }
-
-        tree.printTree();
-        tree.delete(3);
-        tree.printTree();
-        tree.delete(2);
-        tree.printTree();
-        tree.delete(4);
-        tree.printTree();
-    }
 }
