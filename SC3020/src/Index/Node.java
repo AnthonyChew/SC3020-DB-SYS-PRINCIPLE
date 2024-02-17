@@ -1,6 +1,9 @@
 package Index;
 
+import java.util.Arrays;
+
 import Disks.Address;
+import Disks.Disk;
 
 // An abstract class necessary so that InternalNode and LeafNode can be
 // passed in as Node objects to the InternalNode constructor
@@ -16,6 +19,7 @@ public abstract class Node {
         this.parent = null;
         this.numKeys = 0;
         this.keys = new int[order - 1];
+        Arrays.fill(this.keys, Integer.MAX_VALUE);
     }
 
     public int[] getKeys() {
@@ -73,7 +77,37 @@ public abstract class Node {
         _this.addKey(key, value);
     }
 
-    public boolean delete(int key) {
+    public void query(int key, Disk disk) {
+        int indexBlocks = 0;
+        boolean isRootLeaf = this instanceof LeafNode;
+
+        Node cur = this;
+        while (cur instanceof InternalNode) {
+            InternalNode _cur = (InternalNode) cur;
+            cur = _cur.findChild(key);
+            indexBlocks++;
+        }
+
+        LeafNode leaf = (LeafNode) cur;
+        leaf.query(key, disk, (isRootLeaf ? 1 : indexBlocks + 1));
+    }
+
+    public void rangeQuery(int startKey, int endKey, Disk disk) {
+        int indexBlocks = 0;
+        boolean isRootLeaf = this instanceof LeafNode;
+
+        Node cur = this;
+        while (cur instanceof InternalNode) {
+            InternalNode _cur = (InternalNode) cur;
+            cur = _cur.findChild(startKey);
+            indexBlocks++;
+        }
+
+        LeafNode leaf = (LeafNode) cur;
+        leaf.rangeQuery(startKey, endKey, disk, (isRootLeaf ? 1 : indexBlocks + 1));
+    }
+
+    public boolean delete(int key, Disk disk) {
         boolean deleted = false;
         if (this instanceof InternalNode) {
             InternalNode _this = (InternalNode) this;
@@ -93,20 +127,20 @@ public abstract class Node {
                          // parent
                     leftSibling = child.getLeftSibling();
                 }
-                deleted = child.deleteKey(key, leftSibling, child.getNextLeafNode());
+                deleted = child.deleteKey(key, disk, leftSibling, child.getNextLeafNode());
                 _this.rebalance();
                 return deleted;
             }
 
             // At other levels other than k - 1 and leaf node level
             InternalNode child = (InternalNode) _this.findChild(key);
-            deleted = child.delete(key);
+            deleted = child.delete(key, disk);
             _this.rebalance();
             return deleted;
         }
 
         LeafNode _this = (LeafNode) this;
-        return _this.deleteKey(key, null, null);
+        return _this.deleteKey(key, disk, null, null);
     }
 
     public Node findChild(int key) {

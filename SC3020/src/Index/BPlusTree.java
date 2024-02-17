@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Disks.Address;
+import Disks.Disk;
 
 public class BPlusTree {
     private Node root;
@@ -29,8 +30,16 @@ public class BPlusTree {
         }
     }
 
-    public void delete(int key) {
-        this.root.delete(key);
+    public void query(int key, Disk disk) {
+        this.root.query(key, disk);
+    }
+
+    public void rangeQuery(int startKey, int endKey, Disk disk) {
+        this.root.rangeQuery(startKey, endKey, disk);
+    }
+
+    public void delete(int key, Disk disk) {
+        this.root.delete(key, disk);
         if (this.root.getNumKeys() == 0) {
             this.root = ((InternalNode) this.root).getChild(0);
             this.root.setParent(null);
@@ -140,5 +149,39 @@ public class BPlusTree {
 
     public void printTree() {
         this.traverseTree(this.root);
+    }
+
+    public void printLeafs() {
+        Node cur = this.root;
+        while (cur instanceof InternalNode) {
+            cur = ((InternalNode) cur).getChild(0);
+        }
+
+        while (cur != null) {
+            LeafNode leaf = (LeafNode) cur;
+            for (int i = 0; i < leaf.getNumKeys(); i++) {
+                System.out.print(leaf.getKey(i) + " ");
+            }
+            System.out.println();
+            cur = leaf.getNextLeafNode();
+        }
+    }
+
+    public void printKPLusOneKeys() {
+        if (this.root instanceof LeafNode)
+            return;
+
+        InternalNode cur = (InternalNode) this.root;
+        while (!(cur.getChild(0) instanceof LeafNode)) {
+            cur = (InternalNode) cur.getChild(0);
+        }
+
+        while (cur != null) {
+            for (int i = 0; i < cur.getNumKeys(); i++) {
+                System.out.print(cur.getKey(i) + " ");
+            }
+            System.out.println();
+            cur = cur.getRightSibling();
+        }
     }
 }

@@ -35,14 +35,16 @@ public class Main {
                     controller.experiment2();
                     break;
                 case 3:
-                    controller.experimentTest();
-                    // controller.experiment3();
+                    controller.experiment3();
                     break;
                 case 4:
                     controller.experiment4();
                     break;
                 case 5:
                     controller.experiment5();
+                    break;
+                case 6:
+                    controller.debugBTree();
                     break;
                 case 0:
                     break;

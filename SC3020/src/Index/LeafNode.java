@@ -1,11 +1,11 @@
 package Index;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import Disks.Address;
+import Disks.Disk;
 
 // minimum -> (order) // 2 keys
 public class LeafNode extends Node {
@@ -84,7 +84,7 @@ public class LeafNode extends Node {
     }
 
     // Search for the Address mapped to the given key
-    public int binarySearch(int key) { // Will be changed to return Address obj instead
+    public int binarySearch(int key) {
         int left = 0;
         int right = this.numKeys - 1;
         while (left <= right) {
@@ -120,6 +120,9 @@ public class LeafNode extends Node {
             for (int i = mid, j = 0; i < this.numKeys; i++, j++) {
                 newLeafNode.setKey(j, this.keys[i]);
                 newLeafNode.setValue(j, this.values[i]);
+
+                this.keys[i] = Integer.MAX_VALUE;
+                this.values[i] = null;
             }
             newLeafNode.setNumKeys(this.numKeys - mid);
             this.numKeys = mid;
@@ -128,6 +131,9 @@ public class LeafNode extends Node {
             for (int i = mid + 1, j = 0; i < this.numKeys; i++, j++) {
                 newLeafNode.setKey(j, this.keys[i]);
                 newLeafNode.setValue(j, this.values[i]);
+
+                this.keys[i] = Integer.MAX_VALUE;
+                this.values[i] = null;
             }
             newLeafNode.setNumKeys(this.numKeys - (mid + 1));
             this.numKeys = mid + 1;
@@ -144,7 +150,7 @@ public class LeafNode extends Node {
         this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
     }
 
-    public boolean deleteKey(int key, Node leftSibling, Node rightSibling) {
+    public boolean deleteKey(int key, Disk disk, Node leftSibling, Node rightSibling) {
         LeafNode _leftSibling = (LeafNode) leftSibling;
         LeafNode _rightSibling = (LeafNode) rightSibling;
 
@@ -158,7 +164,12 @@ public class LeafNode extends Node {
         if (index == -1)
             return false;
 
-        // TODO: Loop through address and delete record in disk as well
+        List<Address> addresses = this.values[index];
+        addresses.forEach(
+                address -> {
+                    System.out.println("Deleting record with address: " + address);
+                    disk.deleteRecord(address);
+                });
 
         // case 1: simple delete
         if (this.numKeys - 1 >= this.MIN_KEYS) {
@@ -241,10 +252,6 @@ public class LeafNode extends Node {
     public LeafNode getLeftSibling() {
         InternalNode parent = this.getParent();
 
-        // for (int i = 0; i < parent.getParent().getNumKeys(); i++) {
-        // System.out.print(parent.getParent().getKey(i) + " ");
-        // }
-
         while (parent.getParent() != null && parent.getParent().getChild(0) == parent) {
             parent = parent.getParent();
         }
@@ -259,6 +266,70 @@ public class LeafNode extends Node {
         System.out.println(index);
 
         return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
+    }
+
+    public void query(int key, Disk disk, int indexBlocksAccessed) {
+        int index = -1;
+        for (int i = 0; i < this.numKeys; i++) {
+            if (this.keys[i] == key) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            System.out.println("Query with key: " + key + " not found.");
+            return;
+        }
+
+        float sum = 0;
+        int dataBlocks = 0;
+        List<Address> addresses = this.values[index];
+        for (Address address : addresses) {
+            sum += disk.getRecord(address).getRecordData().getAverageRating();
+            dataBlocks++;
+        }
+        float average = sum / dataBlocks;
+
+        System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
+        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
+        System.out.println("Average of average ratings: " + average);
+    }
+
+    public void rangeQuery(int startKey, int endKey, Disk disk, int indexBlocksAccessed) {
+        int index = -1;
+        for (int i = 0; i < this.numKeys; i++) {
+            if (this.keys[i] >= startKey) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            System.out.println("Query with start key: " + startKey + " not found.");
+            return;
+        }
+
+        float sum = 0;
+        int dataBlocks = 0;
+        LeafNode cur = this;
+        while (cur != null && cur.getKey(index) <= endKey) {
+            List<Address> addresses = this.values[index];
+            for (Address address : addresses) {
+                sum += disk.getRecord(address).getRecordData().getAverageRating();
+                dataBlocks++;
+            }
+            index++;
+
+            if (index == cur.getNumKeys()) {
+                cur = cur.getNextLeafNode();
+                index = 0;
+                indexBlocksAccessed++;
+            }
+        }
+        float average = sum / dataBlocks;
+
+        System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
+        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
+        System.out.println("Average of average ratings: " + average);
     }
 
     public int getSubtreeLB() {

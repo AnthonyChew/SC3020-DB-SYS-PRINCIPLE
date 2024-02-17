@@ -10,12 +10,15 @@ public class BruteforceExperiments {
      */
     public static ArrayList<Record> experiment3(Disk disk) {
         /*
-         * This method is the brute force method for experiment 3 to retrieve records where numVotes = 500.
+         * This method is the brute force method for experiment 3 to retrieve records
+         * where numVotes = 500.
          *
          * @Param Disk - Pass in the disk to retrieve records via brute force.
+         * 
          * @Return ArrayList - Returns the retrieved records in an ArrayList.
          */
         int noOfAccessedBlocks = 0;
+        float sum = 0;
         Block[] blocks = disk.getBlocks();
         ArrayList<Record> recordResults = new ArrayList<>();
         for (int i = 0; i < blocks.length; i++) {
@@ -25,12 +28,16 @@ public class BruteforceExperiments {
                 for (int j = 0; j < records.length; j++) {
                     if (records[j] != null && records[j].getRecordData().getNumVotes() == 500) {
                         recordResults.add(records[j]);
+                        sum += records[j].getRecordData().getAverageRating();
                     }
                 }
             }
         }
+        float average = sum / recordResults.size();
+
         System.out.println("Number of records with numVotes = 500: " + recordResults.size() + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");
+        System.out.println("Average of average ratings: " + average);
         return recordResults;
     }
 
@@ -40,6 +47,7 @@ public class BruteforceExperiments {
          * where 30 000 <= numVotes <= 40 000.
          *
          * @Param Disk - Pass in the disk to retrieve records via brute force.
+         * 
          * @Return ArrayList - Returns the retrieved records in an ArrayList.
          */
         int noOfAccessedBlocks = 0;
@@ -51,24 +59,23 @@ public class BruteforceExperiments {
                 Record[] records = blocks[i].getRecords();
                 for (int j = 0; j < records.length; j++) {
                     if (records[j] != null &&
-                            (
-                                    records[j].getRecordData().getNumVotes() >= 30000 &&
-                                            records[j].getRecordData().getNumVotes() <= 40000
-                            )
-                    ) {
+                            (records[j].getRecordData().getNumVotes() >= 30000 &&
+                                    records[j].getRecordData().getNumVotes() <= 40000)) {
                         recordResults.add(records[j]);
                     }
                 }
             }
         }
-        System.out.println("Number of records with 30 000 <= numVotes <= 40 000: " + recordResults.size() + " records.");
+        System.out
+                .println("Number of records with 30 000 <= numVotes <= 40 000: " + recordResults.size() + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");
         return recordResults;
     }
 
     public static void experiment5(Disk disk) {
         /*
-         * This method is the brute force method for experiment 5 to delete records where numVotes = 1000.
+         * This method is the brute force method for experiment 5 to delete records
+         * where numVotes = 1000.
          *
          * @Param Disk - Pass in the disk to delete records via brute force.
          */
@@ -82,7 +89,7 @@ public class BruteforceExperiments {
                 for (int j = 0; j < records.length; j++) {
                     if (records[j] != null && records[j].getRecordData().getNumVotes() == 1000) {
                         // DELETE RECORD BASED ON I and J FROM LOOPING THROUGH
-                        //  INSTEAD OF THROUGH ADDRESS
+                        // INSTEAD OF THROUGH ADDRESS
                         if (disk.deleteRecord(i, j)) {
                             noOfDeletedRecords++;
                             System.out.println("Successfully deleted record from block(" + i + "), record(" + j + ").");
@@ -95,13 +102,14 @@ public class BruteforceExperiments {
         }
         System.out.println("Number of deleted records with numVotes = 1000: " + noOfDeletedRecords + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");
-//        for(Address address: addresses)
-//        {
-//            Record record = address.getRecord(disk, address.getBlock(), address.getIndex());
-//            if(record.getRecordData().getNumVotes() == 1000)
-//            {
-//                disk.deleteRecord(address);
-//            }
-//        }
+        // for(Address address: addresses)
+        // {
+        // Record record = address.getRecord(disk, address.getBlock(),
+        // address.getIndex());
+        // if(record.getRecordData().getNumVotes() == 1000)
+        // {
+        // disk.deleteRecord(address);
+        // }
+        // }
     }
 }

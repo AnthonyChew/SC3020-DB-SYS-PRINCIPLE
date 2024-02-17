@@ -84,78 +84,84 @@ public class InternalNode extends Node {
     }
 
     public void splitInternalNode(int key, Node rightChild) {
-        int mid = ((this.getOrder() - 1) / 2) - 1;
+        int mid = this.MIN_KEYS - 1;
 
         // find insert pos
         int index = 0;
-        while (index < this.getNumKeys() && key > this.getKey(index)) {
+        while (index < this.numKeys && key > this.keys[index]) {
             index++;
         }
         InternalNode newInternalNode = new InternalNode(this.getOrder());
 
         // first half including mid -> start copying from mid over to new node
         if (index <= mid) {
-            for (int i = mid, j = 0; i < this.getNumKeys(); i++, j++) {
-                if (i + 1 < this.numKeys) // mid will be promoted
+            for (int i = mid, j = 0; i < this.numKeys; i++, j++) {
+                if (i + 1 < this.numKeys) { // mid will be promoted
                     newInternalNode.setKey(j, this.keys[i + 1]);
+                    this.keys[i + 1] = Integer.MAX_VALUE;
+                }
                 newInternalNode.setChild(j, this.children[i + 1]);
                 newInternalNode.getChild(j).setParent(newInternalNode);
+                this.children[i + 1] = null;
             }
-
             newInternalNode.setNumKeys(this.numKeys - mid - 1);
             newInternalNode.setNumChildren(this.numKeys - mid);
             this.numKeys = mid;
             this.numChildren = mid + 1;
+            this.keys[mid] = Integer.MAX_VALUE;
             this.addKey(key, rightChild);
         } else { // second half -> copy everything after mid over to new node to insert
-            for (int i = mid + 1, j = 0; i < this.numKeys; i++, j++) {
+            int startShiftIndex = mid + 1;
+            for (int i = startShiftIndex, j = 0; i < this.numKeys; i++, j++) {
                 // insert at start -> leave a ptr space at index 0 for new child node
-                if (index == mid + 1) {
+                if (index == startShiftIndex) {
                     newInternalNode.setKey(j, this.keys[i]);
                     newInternalNode.setChild(j + 1, this.children[i + 1]);
                     newInternalNode.getChild(j + 1).setParent(newInternalNode);
+
+                    this.keys[i] = Integer.MAX_VALUE;
+                    this.children[i + 1] = null;
                 } else { // insert in middle -> copy all except first key and find slot to insert
-                    if (i + 1 < this.numKeys) // (mid + 1) will be promoted
+                    if (i + 1 < this.numKeys) { // (mid + 1) will be promoted
                         newInternalNode.setKey(j, this.keys[i + 1]);
+                        this.keys[i + 1] = Integer.MAX_VALUE;
+                    }
                     newInternalNode.setChild(j, this.children[i + 1]);
                     newInternalNode.getChild(j).setParent(newInternalNode);
+                    this.children[i + 1] = null;
                 }
             }
 
             // first spot
-            if (index == mid + 1) {
+            if (index == startShiftIndex) {
                 newInternalNode.setChild(0, rightChild);
-                newInternalNode.setNumKeys(this.numKeys - (mid + 1));
+                newInternalNode.setNumKeys(this.numKeys - (startShiftIndex));
             } else if (index == this.numKeys) { // last spot
-                newInternalNode.setKey(this.numKeys - (mid + 1) - 1, key);
-                newInternalNode.setChild(this.numKeys - (mid + 1), rightChild);
-                newInternalNode.setNumKeys(this.numKeys - (mid + 1));
-            } else { // middle -> shift
-                for (int i = index - (mid + 1) - 1; i < this.numKeys - (mid + 1) - 1; i++) {
+                newInternalNode.setKey(this.numKeys - startShiftIndex - 1, key);
+                newInternalNode.setChild(this.numKeys - startShiftIndex, rightChild);
+                newInternalNode.setNumKeys(this.numKeys - startShiftIndex);
+            } else { // middle -> shift right
+                for (int i = index - startShiftIndex - 1; i < this.numKeys - startShiftIndex - 1; i++) {
                     newInternalNode.setKey(i + 1, newInternalNode.getKey(i));
                     newInternalNode.setChild(i + 2, newInternalNode.getChild(i + 1));
                 }
-                newInternalNode.setKey(index - (mid + 1) - 1, key);
-                newInternalNode.setChild(index - (mid + 1), rightChild);
-                newInternalNode.setNumKeys(this.numKeys - (mid + 1));
+                newInternalNode.setKey(index - startShiftIndex - 1, key);
+                newInternalNode.setChild(index - startShiftIndex, rightChild);
+                newInternalNode.setNumKeys(this.numKeys - startShiftIndex);
             }
             rightChild.setParent(newInternalNode);
 
             newInternalNode.setNumChildren(newInternalNode.getNumKeys() + 1);
+            this.keys[mid + 1] = Integer.MAX_VALUE;
             this.numKeys = mid + 1;
             this.numChildren = mid + 2;
         }
 
         if (this.getParent() == null) {
-            InternalNode parentNode = new InternalNode(this.getOrder());
+            InternalNode parentNode = new InternalNode(this.getOrder(), newInternalNode.getSubtreeLB(), this,
+                    newInternalNode);
             this.setParent(parentNode);
             newInternalNode.setParent(parentNode);
-
-            parentNode.setChild(0, this);
-            parentNode.setChild(1, newInternalNode);
-            parentNode.setKey(0, newInternalNode.getSubtreeLB());
-            parentNode.setNumChildren(2);
-            parentNode.setNumKeys(1);
             return;
         }
         this.getParent().addKey(newInternalNode.getSubtreeLB(), newInternalNode);
@@ -198,73 +204,69 @@ public class InternalNode extends Node {
     }
 
     public InternalNode getLeftSibling() {
-        InternalNode parent = this.getParent();
-        if (parent == null) {
+        if (this.getParent() == null)
             return null;
-        }
 
         nodeIndex = this.getNodeIndex();
         if (nodeIndex == 0) {
-            int levels = 0;
-            // traverse to 1 level below ancestor
-            while (parent.getParent() != null && parent.getParent().getChild(0) == parent) {
-                parent = parent.getParent();
+            int levels = 1;
+            int prevNodeIndex = this.nodeIndex;
+            InternalNode ancestor = this.getParent();
+            InternalNode cur = this;
+            while (ancestor != null && ancestor.getChild(0) == cur) {
+                prevNodeIndex = ancestor.getNodeIndex();
+                cur = ancestor;
+                ancestor = ancestor.getParent();
                 levels++;
             }
-            InternalNode ancestor = parent.getParent();
-            levels++;
 
-            // it is leftmost node already
+            // it is rightmost node already
             if (ancestor == null) {
                 return null;
             }
 
-            int index = ancestor.getChildIndex(parent);
-            System.out.println(index);
-
-            InternalNode target = ancestor;
+            InternalNode target = (InternalNode) ancestor.getChild(prevNodeIndex - 1);
+            levels--;
             while (levels > 0) {
                 target = (InternalNode) target.getChild(target.getNumChildren() - 1);
                 levels--;
             }
             return target;
         }
-        return ((InternalNode) parent.getChild(nodeIndex - 1));
+        return ((InternalNode) this.getParent().getChild(nodeIndex - 1));
     }
 
     public InternalNode getRightSibling() {
-        InternalNode parent = this.getParent();
-        if (parent == null) {
+        if (this.getParent() == null)
             return null;
-        }
 
         nodeIndex = this.getNodeIndex();
-        if (nodeIndex == this.numChildren - 1) {
-            int levels = 0;
-            // traverse to 1 level below ancestor
-            while (parent.getParent() != null && parent.getParent().getChild(this.numChildren - 1) == parent) {
-                parent = parent.getParent();
+        if (nodeIndex == this.getParent().getNumChildren() - 1) {
+            int levels = 1;
+            int prevNodeIndex = this.nodeIndex;
+            InternalNode ancestor = this.getParent();
+            InternalNode cur = this;
+            while (ancestor != null && ancestor.getChild(ancestor.getNumChildren() - 1) == cur) {
+                prevNodeIndex = ancestor.getNodeIndex();
+                cur = ancestor;
+                ancestor = ancestor.getParent();
                 levels++;
             }
-            InternalNode ancestor = parent.getParent();
-            levels++;
 
-            // it is leftmost node already
+            // it is rightmost node already
             if (ancestor == null) {
                 return null;
             }
 
-            int index = ancestor.getChildIndex(parent);
-            System.out.println(index);
-
-            InternalNode target = ancestor;
+            InternalNode target = (InternalNode) ancestor.getChild(prevNodeIndex + 1);
+            levels--;
             while (levels > 0) {
                 target = (InternalNode) target.getChild(0);
                 levels--;
             }
             return target;
         }
-        return ((InternalNode) parent.getChild(nodeIndex + 1));
+        return ((InternalNode) this.getParent().getChild(nodeIndex + 1));
     }
 
     public void updateChildren(InternalNode leftSibling, InternalNode rightSibling) {

@@ -23,11 +23,7 @@ public class Address {
         this.index = index;
     }
 
-    /*
-     * Get specific record inside block
-     */
-    public Record getRecord(Disk disk, int blockIndex , int recordIndex) {
-
-        return disk.getBlocks()[blockIndex].getRecords()[index];
+    public String toString() {
+        return "Block(" + block + ") Index(" + index + ")";
     }
 }
