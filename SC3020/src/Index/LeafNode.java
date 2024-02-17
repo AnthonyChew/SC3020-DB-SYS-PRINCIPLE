@@ -312,7 +312,7 @@ public class LeafNode extends Node {
         int dataBlocks = 0;
         LeafNode cur = this;
         while (cur != null && cur.getKey(index) <= endKey) {
-            List<Address> addresses = this.values[index];
+            List<Address> addresses = cur.getValue(index);
             for (Address address : addresses) {
                 sum += disk.getRecord(address).getRecordData().getAverageRating();
                 dataBlocks++;
@@ -329,6 +329,7 @@ public class LeafNode extends Node {
 
         System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
         System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
+        System.out.println("Sum of average ratings: " + sum);
         System.out.println("Average of average ratings: " + average);
     }
 

@@ -14,7 +14,7 @@ public class BruteforceExperiments {
          * where numVotes = 500.
          *
          * @Param Disk - Pass in the disk to retrieve records via brute force.
-         * 
+         *
          * @Return ArrayList - Returns the retrieved records in an ArrayList.
          */
         int noOfAccessedBlocks = 0;
@@ -47,10 +47,11 @@ public class BruteforceExperiments {
          * where 30 000 <= numVotes <= 40 000.
          *
          * @Param Disk - Pass in the disk to retrieve records via brute force.
-         * 
+         *
          * @Return ArrayList - Returns the retrieved records in an ArrayList.
          */
         int noOfAccessedBlocks = 0;
+        float sum = 0;
         Block[] blocks = disk.getBlocks();
         ArrayList<Record> recordResults = new ArrayList<>();
         for (int i = 0; i < blocks.length; i++) {
@@ -58,17 +59,27 @@ public class BruteforceExperiments {
                 noOfAccessedBlocks++;
                 Record[] records = blocks[i].getRecords();
                 for (int j = 0; j < records.length; j++) {
+//                    if (records[j] != null &&
+//                            (records[j].getRecordData().getNumVotes() >= 30000 &&
+//                                    records[j].getRecordData().getNumVotes() <= 40000)) {
+//                        recordResults.add(records[j]);
+//                        sum += records[j].getRecordData().getAverageRating();
+//                    }
                     if (records[j] != null &&
                             (records[j].getRecordData().getNumVotes() >= 30000 &&
-                                    records[j].getRecordData().getNumVotes() <= 40000)) {
+                                    records[j].getRecordData().getNumVotes() <= 30778)) {
                         recordResults.add(records[j]);
+                        sum += records[j].getRecordData().getAverageRating();
                     }
                 }
             }
         }
+        float average = sum / recordResults.size();
         System.out
                 .println("Number of records with 30 000 <= numVotes <= 40 000: " + recordResults.size() + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");
+        System.out.println("Sum of averageRating of records returned: " + sum);
+        System.out.println("Average of averageRating of records returned: " + average);
         return recordResults;
     }
 

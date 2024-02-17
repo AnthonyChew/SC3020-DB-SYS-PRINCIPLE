@@ -21,8 +21,8 @@ public class BPlusTreeExperiments {
 
     public static void experiment4(BPlusTree tree, Disk disk) {
         tree.printLeafs();
-        // tree.printKPLusOneKeys();
-        // tree.rangeQuery(30000, 40000, disk);
+//         tree.printKPLusOneKeys();
+//         tree.rangeQuery(30000, 40000, disk);
     }
 
     public static void experiment5(BPlusTree tree, Disk disk) {
