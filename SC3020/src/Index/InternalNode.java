@@ -44,7 +44,7 @@ public class InternalNode extends Node {
         this.children[index] = child;
         child.setNodeIndex(index);
     }
-
+  
     // When we insert at InternalNode, it means the leaf node has
     // split and we need to add a new key to the parent node
     // Each addition of a key comes with a new right child
