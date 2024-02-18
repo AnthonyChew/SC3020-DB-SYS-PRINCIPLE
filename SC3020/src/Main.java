@@ -1,51 +1,55 @@
-import Index.BPlusTree;
-import Records.Record;
-import Records.RecordData;
-import Records.RecordHeader;
-import Utils.DateConverter;
-import Utils.IntConverter;
-import Utils.TsvReader;
+import Disks.Address;
+import Disks.Disk;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // testRecord();
-        // testBlockFull();
-        // testBlockDelnInsert();
-        testBPlusTree();
+        Disk disk = new Disk();
+        ArrayList<Address> addresses = new ArrayList<>();
+        Controller controller = new Controller(disk, addresses);
+        int choice = -1;
+        do {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Select an option:");
+            System.out.println("1) Experiment 1 - Store data on disk and report statistics.");
+            System.out.println(
+                    "2) Experiment 2 - Build B+ Tree on 'numVotes' by inserting records sequentially and report statistics.");
+            System.out.println("3) Experiment 3 - Retrieve movies with 'numVotes' equal to 500 and report statistics.");
+            System.out.println(
+                    "4) Experiment 4 - Retrieve movies with 'numVotes' ranging from [30 000, 40 000] and report statistics.");
+            System.out.println(
+                    "5) Experiment 5 - Delete movies with 'numVotes' equal to 1000, update B+ tree and report statistics.");
+            System.out.println("\n0) Exit.");
 
-        // TsvReader.TsvToStringArray("data.tsv").get(0).printRecord();
-    }
+            System.out.print("Choice: ");
+            choice = sc.nextInt();
 
-    static Record record;
-    static Block block = new Block();;
-
-    public static void testRecord() {
-        record = new Record(new RecordHeader(0), new RecordData("tt0000001", 5.6f, 1645));
-        record.printRecord();
-    }
-
-    public static void testBlockFull() {
-        while (!block.isFull()) {
-            block.addRecord(record);
-            System.out.println("Inserting to block" + block.getEmptyIndex());
-        }
-        System.out.println("Block is full");
-    }
-
-    public static void testBlockDelnInsert() {
-        if (block.deleteRecord(11)) {
-            System.out.println("Block not found!");
-        }
-
-        if (block.deleteRecord(5)) {
-            System.out.println("Block 5 deleted!\nCurrent pointer at : " + block.getEmptyIndex() + "\nPrev pointer at :"
-                    + block.getPrevIndex());
-
-            block.addRecord(record);
-
-            System.out.println("Inserted to empty block!\nCurrent pointer at : " + block.getEmptyIndex()
-                    + "\nPrev pointer at :" + block.getPrevIndex());
-        }
+            switch (choice) {
+                case 1:
+                    controller.experiment1();
+                    break;
+                case 2:
+                    controller.experiment2();
+                    break;
+                case 3:
+                    controller.experiment3();
+                    break;
+                case 4:
+                    controller.experiment4();
+                    break;
+                case 5:
+                    controller.experiment5();
+                    break;
+                case 6:
+                    controller.debugBTree();
+                    break;
+                case 0:
+                    break;
+            }
+        } while (choice != 0);
     }
 
     public static void testBPlusTree() {

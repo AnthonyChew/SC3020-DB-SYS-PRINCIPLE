@@ -1,21 +1,36 @@
 package Index;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import Disks.Address;
+import Disks.Disk;
+
+// minimum -> (order) // 2 keys
 public class LeafNode extends Node {
-    private int[] values; // Will be replaced with the Address array instead
+    // private int[] values; // Will be replaced with the Address array instead
+    private final int MIN_KEYS = this.getOrder() / 2;
+    private List<Address>[] values;
     private LeafNode nextLeafNode;
 
     public LeafNode(int order) {
         super(order);
-        this.values = new int[order - 1];
+        this.values = new List[order - 1];
+        Arrays.fill(this.values, new LinkedList<Address>());
         this.nextLeafNode = null;
     }
 
-    public int getNumKeys() {
-        return this.numKeys;
+    public List<Address> getValue(int index) {
+        return this.values[index];
     }
 
-    public int getKey(int index) {
-        return this.keys[index];
+    public void setValue(int index, List<Address> value) {
+        this.values[index] = value;
+    }
+
+    public List<Address>[] getValues() {
+        return this.values;
     }
 
     public LeafNode getNextLeafNode() {
@@ -26,35 +41,50 @@ public class LeafNode extends Node {
         this.nextLeafNode = nextLeafNode;
     }
 
-    // value will be replaced with Address obj
-    public boolean addKey(int key, int value) {
-        // If the node is full, return false
-        if (this.isFull()) {
-            return false;
+    public boolean containsKey(int key) {
+        for (int i = 0; i < this.numKeys; i++) {
+            if (this.keys[i] == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addKey(int key, Address value) {
+        if (this.isFull() && !this.containsKey(key)) {
+            this.splitLeafNode(key, value);
+            return;
         }
 
-        // Find the index where the key should be inserted
+        // find the index where the key should be inserted
         int index = 0;
-        while (index < this.numKeys && this.keys[index] < key) {
+        while (index < this.numKeys && key > this.keys[index]) {
+            if (key == this.keys[index])
+                break;
             index++;
         }
 
-        // Shift the keys and values to the right
+        // duplicate -> add to linked list
+        if (this.keys[index] == key) {
+            this.values[index].add(value);
+            return;
+        }
+
+        // shift the keys and values to the right
         for (int i = this.numKeys - 1; i >= index; i--) {
             this.keys[i + 1] = this.keys[i];
             this.values[i + 1] = this.values[i];
         }
 
-        // Insert the key and value
+        // insert the key and value
         this.keys[index] = key;
-        this.values[index] = value;
+        this.values[index] = new LinkedList<Address>();
+        this.values[index].add(value);
         this.numKeys++;
-
-        return true;
     }
 
     // Search for the Address mapped to the given key
-    public int binarySearch(int key) { // Will be changed to return Address obj instead
+    public int binarySearch(int key) {
         int left = 0;
         int right = this.numKeys - 1;
         while (left <= right) {
@@ -70,34 +100,239 @@ public class LeafNode extends Node {
         return -1;
     }
 
-    // Split the leaf node and return the new leaf node
-    public LeafNode splitLeafNode(int key, int value) {
-        int mid = this.numKeys / 2;
-        if (this.numKeys % 2 == 1) {
-            mid++;
-        }
-        LeafNode newLeaf = new LeafNode(super.getOrder());
-        this.nextLeafNode = newLeaf;
+    public void splitLeafNode(int key, Address value) {
+        // index of min number of nodes in a leaf
+        int mid = (this.getOrder() / 2) - 1;
 
-        // Copy the second half of the keys and values to the new leaf
-        for (int i = mid; i < this.numKeys; i++) {
-            newLeaf.keys[i - mid] = this.keys[i];
-            newLeaf.values[i - mid] = this.values[i];
+        // find insert pos
+        int index = 0;
+        while (index < this.numKeys && key > this.keys[index]) {
+            index++;
         }
-        newLeaf.numKeys = this.numKeys - mid;
-        this.numKeys = mid;
 
-        // If the key belongs to the new leaf, insert it there
-        if (key >= newLeaf.keys[0]) {
-            newLeaf.addKey(key, value);
-        } else {
+        // set new leaf node
+        LeafNode newLeafNode = new LeafNode(this.getOrder());
+        newLeafNode.setNextLeafNode(this.nextLeafNode);
+        this.nextLeafNode = newLeafNode;
+
+        // first half including mid -> start copying from mid over to new leaf
+        if (index <= mid) {
+            for (int i = mid, j = 0; i < this.numKeys; i++, j++) {
+                newLeafNode.setKey(j, this.keys[i]);
+                newLeafNode.setValue(j, this.values[i]);
+
+                this.keys[i] = Integer.MAX_VALUE;
+                this.values[i] = null;
+            }
+            newLeafNode.setNumKeys(this.numKeys - mid);
+            this.numKeys = mid;
             this.addKey(key, value);
+        } else { // second half -> copy everything after mid over to new leaf
+            for (int i = mid + 1, j = 0; i < this.numKeys; i++, j++) {
+                newLeafNode.setKey(j, this.keys[i]);
+                newLeafNode.setValue(j, this.values[i]);
+
+                this.keys[i] = Integer.MAX_VALUE;
+                this.values[i] = null;
+            }
+            newLeafNode.setNumKeys(this.numKeys - (mid + 1));
+            this.numKeys = mid + 1;
+            newLeafNode.addKey(key, value);
         }
 
-        return newLeaf;
+        // create parent if no parent
+        if (this.getParent() == null) {
+            InternalNode parent = new InternalNode(this.getOrder(), newLeafNode.getSubtreeLB(), this, newLeafNode);
+            this.parent = parent;
+            newLeafNode.setParent(parent);
+            return;
+        }
+        this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
+    }
+
+    public boolean deleteKey(int key, Disk disk, Node leftSibling, Node rightSibling) {
+        LeafNode _leftSibling = (LeafNode) leftSibling;
+        LeafNode _rightSibling = (LeafNode) rightSibling;
+
+        int index = -1;
+        for (int i = 0; i < this.numKeys; i++) {
+            if (this.keys[i] == key) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1)
+            return false;
+
+        List<Address> addresses = this.values[index];
+        addresses.forEach(
+                address -> {
+                    System.out.println("Deleting record with address: " + address);
+                    disk.deleteRecord(address);
+                });
+
+        // case 1: simple delete
+        if (this.numKeys - 1 >= this.MIN_KEYS) {
+            deleteAndShiftLeft(index);
+            this.numKeys--;
+            return true;
+        }
+
+        // case 2: borrow from left sibling
+        if (leftSibling != null && leftSibling.getNumKeys() - 1 >= this.MIN_KEYS) {
+            this.deleteAndBorrowFromLeft(index, _leftSibling);
+        } else if (rightSibling != null && rightSibling.getNumKeys() - 1 >= this.MIN_KEYS) {
+            this.deleteAndBorrowFromRight(index, _rightSibling);
+        } else if (leftSibling != null) { // case 3: merge with left sibling
+            this.mergeWithLeft(index, _leftSibling);
+        } else if (rightSibling != null) { // case 4: merge with right sibling
+            this.mergeWithRight(index, _rightSibling);
+        } else if (leftSibling == null && rightSibling == null) {
+            this.numKeys--;
+        }
+
+        return true;
+    }
+
+    public void deleteAndShiftLeft(int deletePos) {
+        for (int i = deletePos; i < this.numKeys - 1; i++) {
+            this.keys[i] = this.keys[i + 1];
+            this.values[i] = this.values[i + 1];
+        }
+    }
+
+    public void deleteAndShiftRight(int deletePos) {
+        for (int i = deletePos; i > 0; i--) {
+            this.keys[i] = this.keys[i - 1];
+            this.values[i] = this.values[i - 1];
+        }
+    }
+
+    public void deleteAndBorrowFromLeft(int deletePos, LeafNode leftSibling) {
+        this.deleteAndShiftRight(deletePos);
+        this.keys[0] = leftSibling.getKey(leftSibling.getNumKeys() - 1);
+        this.values[0] = leftSibling.getValue(leftSibling.getNumKeys());
+        leftSibling.setNumKeys(leftSibling.getNumKeys() - 1);
+    }
+
+    public void deleteAndBorrowFromRight(int deletePos, LeafNode rightSibling) {
+        this.deleteAndShiftLeft(deletePos);
+        this.keys[this.numKeys - 1] = rightSibling.getKey(0);
+        this.values[this.numKeys] = rightSibling.getValue(0);
+        rightSibling.deleteAndShiftLeft(0);
+        rightSibling.setNumKeys(rightSibling.getNumKeys() - 1);
+    }
+
+    public void mergeWithLeft(int deletePos, LeafNode leftSibling) {
+        this.deleteAndShiftLeft(deletePos);
+        this.numKeys--;
+        for (int i = 0; i < this.numKeys; i++) {
+            leftSibling.setKey(leftSibling.getNumKeys() + i, this.keys[i]);
+            leftSibling.setValue(leftSibling.getNumKeys() + i, this.values[i]);
+        }
+        leftSibling.setNextLeafNode(this.nextLeafNode);
+        leftSibling.setNumKeys(leftSibling.getNumKeys() + this.numKeys);
+        this.numKeys = 0;
+        this.setParent(null);
+    }
+
+    public void mergeWithRight(int deletePos, LeafNode rightSibling) {
+        this.deleteAndShiftLeft(deletePos);
+        this.numKeys--;
+        for (int i = 0; i < rightSibling.getNumKeys(); i++) {
+            this.keys[this.numKeys + i] = rightSibling.getKey(i);
+            this.values[this.numKeys + i] = rightSibling.getValue(i);
+        }
+        this.nextLeafNode = rightSibling.getNextLeafNode();
+        this.numKeys += rightSibling.getNumKeys();
+        rightSibling.setNumKeys(0);
+        rightSibling.setParent(null);
+    }
+
+    public LeafNode getLeftSibling() {
+        InternalNode parent = this.getParent();
+
+        while (parent.getParent() != null && parent.getParent().getChild(0) == parent) {
+            parent = parent.getParent();
+        }
+
+        // This means this leafnode is the leftmost leaf node and wont have any left
+        // siblings
+        if (parent.getParent() == null) {
+            return null;
+        }
+
+        int index = parent.getParent().getChildIndex(parent);
+        System.out.println(index);
+
+        return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
+    }
+
+    public void query(int key, Disk disk, int indexBlocksAccessed) {
+        int index = -1;
+        for (int i = 0; i < this.numKeys; i++) {
+            if (this.keys[i] == key) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            System.out.println("Query with key: " + key + " not found.");
+            return;
+        }
+
+        float sum = 0;
+        int dataBlocks = 0;
+        List<Address> addresses = this.values[index];
+        for (Address address : addresses) {
+            sum += disk.getRecord(address).getRecordData().getAverageRating();
+            dataBlocks++;
+        }
+        float average = sum / dataBlocks;
+
+        System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
+        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
+        System.out.println("Average of average ratings: " + average);
+    }
+
+    public void rangeQuery(int startKey, int endKey, Disk disk, int indexBlocksAccessed) {
+        int index = -1;
+        for (int i = 0; i < this.numKeys; i++) {
+            if (this.keys[i] >= startKey) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            System.out.println("Query with start key: " + startKey + " not found.");
+            return;
+        }
+
+        float sum = 0;
+        int dataBlocks = 0;
+        LeafNode cur = this;
+        while (cur != null && cur.getKey(index) <= endKey) {
+            List<Address> addresses = this.values[index];
+            for (Address address : addresses) {
+                sum += disk.getRecord(address).getRecordData().getAverageRating();
+                dataBlocks++;
+            }
+            index++;
+
+            if (index == cur.getNumKeys()) {
+                cur = cur.getNextLeafNode();
+                index = 0;
+                indexBlocksAccessed++;
+            }
+        }
+        float average = sum / dataBlocks;
+
+        System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
+        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
+        System.out.println("Average of average ratings: " + average);
     }
 
     public int getSubtreeLB() {
-        return this.keys[0];
+        return this.getKey(0);
     }
 }

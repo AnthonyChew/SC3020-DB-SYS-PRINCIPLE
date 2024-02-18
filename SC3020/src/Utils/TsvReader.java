@@ -9,22 +9,32 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+/*
+    Read line by line in from file and return an array list of records
+*/
 public class TsvReader {
     public static ArrayList<Record> TsvToStringArray(String fileName) {
-        File file = new File("src/" + fileName);
+        //Make sure always get from project path 
+        File file = new File(System.getProperty("user.dir") + "/SC3020/src/" + fileName);
 
         ArrayList<Record> Data = new ArrayList<>();
         try (BufferedReader TSVReader = new BufferedReader(new FileReader(file))) {
             String line;
             int index = 0;
             while ((line = TSVReader.readLine()) != null) {
-
                 if (index != 0) {
                     String[] lineItems = line.split("\t");
+                    RecordData recordData = new RecordData(
+                            lineItems[0],
+                            Float.parseFloat(lineItems[1]),
+                            Integer.parseInt(lineItems[2])
+                    );
+                    Record record = new Record(
+                            new RecordHeader(index),
+                            recordData
+                    );
 
-                    Record record = new Record(new RecordHeader(index), new RecordData(lineItems[0], Float.parseFloat(lineItems[1]), Integer.parseInt(lineItems[2])));
-
-                    Data.add(record); //add to Data
+                    Data.add(record); // add to Data
                 }
 
                 index++;
