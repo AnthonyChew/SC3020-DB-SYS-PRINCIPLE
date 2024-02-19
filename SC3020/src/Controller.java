@@ -10,6 +10,11 @@ import Utils.TsvReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Controller {
     private Disk disk;
@@ -46,7 +51,6 @@ public class Controller {
                 "and report statistics.***");
         addresses.forEach(address -> {
             Record record = disk.getRecord(address);
-            // for
             tree.insert(record.getRecordData().getNumVotes(), address);
         });
         BPlusTreeExperiments.experiment2(tree);
@@ -122,27 +126,65 @@ public class Controller {
     }
 
     public void debugBTree() {
-        BPlusTree test_tree = new BPlusTree(5);
-        int keys[] = { 1, 3, 7, 10, 11, 13, 14, 15, 18, 16, 19, 24, 25, 26, 21, 4, 5, 20, 22, 2, 17, 12, 6, 8, 23, 9,
-                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
-                53, 54, 55, 70, 90, 100, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270,
-                280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480,
-                490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690,
-                700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 890, 900,
-                910, 920, 930, 940, 950, 960, 970, 980, 990, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
-                10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 300000, 400000, 500000,
-        };
+        BPlusTree test_tree = new BPlusTree(25);
+
+        int[] keys = null;
+
+        // Generate random numbers to append to keys up to 1000
+        // Random random = new Random();
+        // int[] keys = new int[2000];
+        // for (int i = 0; i < 2000; i++) {
+        // keys[i] = i + random.nextInt(1000);
+        // }
+
+        // String fileName = "keys.txt";
+        // try {
+        // FileWriter writer = new FileWriter(fileName);
+        // for (int key : keys) {
+        // test_tree.insert(key, new Address(0, 0));
+        // writer.write(key + " ");
+        // }
+        // writer.close();
+        // System.out.println("Keys written to file: " + fileName);
+        // } catch (IOException e) {
+        // System.out.println("An error occurred while writing keys to file: " +
+        // e.getMessage());
+        // }
+
+        // Read keys from text file
+        String fileName = "keys.txt";
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            String[] keyStrings = line.split(" ");
+            keys = new int[keyStrings.length];
+            for (int i = 0; i < keyStrings.length; i++) {
+                keys[i] = Integer.parseInt(keyStrings[i]);
+            }
+            bufferedReader.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading keys from file: " + e.getMessage());
+        }
 
         for (int key : keys) {
             test_tree.insert(key, new Address(0, 0));
         }
 
-        test_tree.printTree();
-        System.out.println();
-        test_tree.printLeafs();
-        System.out.println();
+        // test_tree.printTree();
+        // System.out.println();
+        // test_tree.printLeafs();
+        // System.out.println();
 
-        test_tree.printKPLusOneKeys();
+        // for (int key : keys) {
+        // test_tree.insert(key, new Address(0, 0));
+        // }
+
+        // test_tree.printTree();
+        // System.out.println();
+        // test_tree.printLeafs();
+        // System.out.println();
+        // test_tree.printKPLusOneKeys();
     }
 
     public static void timeTaken(long elapsedTime, String msg) {

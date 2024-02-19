@@ -102,7 +102,7 @@ public class LeafNode extends Node {
 
     public void splitLeafNode(int key, Address value) {
         // index of min number of nodes in a leaf
-        int mid = (this.getOrder() / 2) - 1;
+        int mid = this.MIN_KEYS - 1;
 
         // find insert pos
         int index = 0;
@@ -195,7 +195,7 @@ public class LeafNode extends Node {
     }
 
     public void deleteAndShiftLeft(int deletePos) {
-        for (int i = deletePos; i < this.numKeys - 1; i++) {
+        for (int i = deletePos; i < this.numKeys; i++) {
             this.keys[i] = this.keys[i + 1];
             this.values[i] = this.values[i + 1];
         }
@@ -312,7 +312,7 @@ public class LeafNode extends Node {
         int dataBlocks = 0;
         LeafNode cur = this;
         while (cur != null && cur.getKey(index) <= endKey) {
-            List<Address> addresses = this.values[index];
+            List<Address> addresses = cur.getValue(index);
             for (Address address : addresses) {
                 sum += disk.getRecord(address).getRecordData().getAverageRating();
                 dataBlocks++;
@@ -329,6 +329,7 @@ public class LeafNode extends Node {
 
         System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
         System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
+        System.out.println("Sum of average ratings: " + sum);
         System.out.println("Average of average ratings: " + average);
     }
 

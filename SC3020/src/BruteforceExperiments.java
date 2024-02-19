@@ -53,6 +53,7 @@ public class BruteforceExperiments {
         int noOfAccessedBlocks = 0;
         Block[] blocks = disk.getBlocks();
         ArrayList<Record> recordResults = new ArrayList<>();
+        float sum = 0;
         for (int i = 0; i < blocks.length; i++) {
             if (blocks[i] != null && !blocks[i].isEmpty()) {
                 noOfAccessedBlocks++;
@@ -62,13 +63,18 @@ public class BruteforceExperiments {
                             (records[j].getRecordData().getNumVotes() >= 30000 &&
                                     records[j].getRecordData().getNumVotes() <= 40000)) {
                         recordResults.add(records[j]);
+                        sum += records[j].getRecordData().getAverageRating();
                     }
                 }
             }
         }
+        float average = sum / recordResults.size();
+
         System.out
                 .println("Number of records with 30 000 <= numVotes <= 40 000: " + recordResults.size() + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");
+        System.out.println("Sum of average ratings: " + sum);
+        System.out.println("Average of average ratings: " + average);
         return recordResults;
     }
 

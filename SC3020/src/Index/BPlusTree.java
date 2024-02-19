@@ -123,6 +123,8 @@ public class BPlusTree {
         Queue<Node> queue = new LinkedList<>();
         queue.add(root);
 
+        int leafs = 0;
+
         while (!queue.isEmpty()) {
             int levelSize = queue.size();
 
@@ -134,6 +136,8 @@ public class BPlusTree {
                     for (int j = 0; j < leaf.getNumKeys(); j++) {
                         System.out.print(leaf.getKey(j) + " ");
                     }
+                    leafs++;
+                    System.out.print("   ");
                 } else {
                     InternalNode internal = (InternalNode) node;
                     for (int j = 0; j < internal.getNumChildren(); j++) {
@@ -141,30 +145,37 @@ public class BPlusTree {
                             System.out.print(internal.getKey(j) + " ");
                         queue.add(internal.getChild(j));
                     }
+                    System.out.print("   ");
                 }
             }
             System.out.println();
         }
+
+        System.out.println("Number of leafs: " + leafs);
     }
 
     public void printTree() {
-        this.traverseTree(this.root);
+        this.traverseTree(root);
     }
 
-    public void printLeafs() {
-        Node cur = this.root;
+    public void printLeafs(Node root) {
+        Node cur = root;
         while (cur instanceof InternalNode) {
             cur = ((InternalNode) cur).getChild(0);
         }
 
+        int leafs = 0;
         while (cur != null) {
             LeafNode leaf = (LeafNode) cur;
             for (int i = 0; i < leaf.getNumKeys(); i++) {
                 System.out.print(leaf.getKey(i) + " ");
             }
+            leafs++;
             System.out.println();
             cur = leaf.getNextLeafNode();
         }
+
+        System.out.println("Number of leafs: " + leafs);
     }
 
     public void printKPLusOneKeys() {
