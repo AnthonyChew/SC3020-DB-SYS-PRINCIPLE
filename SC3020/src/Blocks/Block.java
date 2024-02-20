@@ -15,15 +15,6 @@ public class Block {
     //Bit flag to determine if slot is filled / empty
     private byte emptyFlag = 0;
 
-    // Getter
-    public Record[] getRecords() {
-        return records;
-    }
-
-    public byte getCurrIndex() {
-        return emptyFlag;
-    }
-
     /*
      * Constructor
      * point current empty slot to first
@@ -31,6 +22,15 @@ public class Block {
      */
     public Block() {
         records = new Record[MaxNumRecords];
+    }
+
+    // Getter
+    public Record[] getRecords() {
+        return records;
+    }
+
+    public byte getCurrIndex() {
+        return emptyFlag;
     }
 
     //Add record into block

@@ -1,11 +1,11 @@
 package Index;
 
+import Disks.Address;
+import Disks.Disk;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import Disks.Address;
-import Disks.Disk;
 
 // minimum -> (order) // 2 keys
 public class LeafNode extends Node {
@@ -290,8 +290,8 @@ public class LeafNode extends Node {
         }
         float average = sum / dataBlocks;
 
+        System.out.println("Number of records with numVotes = 500: " + dataBlocks + " records.");
         System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
-        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
         System.out.println("Average of average ratings: " + average);
     }
 
@@ -327,8 +327,10 @@ public class LeafNode extends Node {
         }
         float average = sum / dataBlocks;
 
+        System.out.println(
+                "Number of records with " + startKey + "<= numVotes <= " + endKey + ": " + dataBlocks + " records."
+        );
         System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
-        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
         System.out.println("Sum of average ratings: " + sum);
         System.out.println("Average of average ratings: " + average);
     }

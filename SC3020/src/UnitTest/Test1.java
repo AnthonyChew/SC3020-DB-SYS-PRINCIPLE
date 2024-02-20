@@ -114,7 +114,7 @@ public class Test1 {
     }
 
     public void testBPlusTree() {
-        int keys[] = new int[] { 25, 16, 17, 60, 9, 21, 18, 12, 17, 16, 62, 14, 159 };
+        int keys[] = new int[]{25, 16, 17, 60, 9, 21, 18, 12, 17, 16, 62, 14, 159};
 
         BPlusTree tree = new BPlusTree(25);
         Address addr = new Address(3, 6);

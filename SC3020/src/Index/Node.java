@@ -1,18 +1,18 @@
 package Index;
 
-import java.util.Arrays;
-
 import Disks.Address;
 import Disks.Disk;
+
+import java.util.Arrays;
 
 // An abstract class necessary so that InternalNode and LeafNode can be
 // passed in as Node objects to the InternalNode constructor
 public abstract class Node {
-    private int order; // max keys in a node + 1
     protected int[] keys;
     protected int numKeys;
     protected InternalNode parent;
     protected int nodeIndex;
+    private int order; // max keys in a node + 1
 
     public Node(int order) {
         this.order = order;
@@ -124,7 +124,7 @@ public abstract class Node {
                 if (childIndex > 0) {
                     leftSibling = (LeafNode) _this.getChild(childIndex - 1);
                 } else { // Otherwise, call getLeftSibling() to retrieve the left sibling from another
-                         // parent
+                    // parent
                     leftSibling = child.getLeftSibling();
                 }
                 deleted = child.deleteKey(key, disk, leftSibling, child.getNextLeafNode());
