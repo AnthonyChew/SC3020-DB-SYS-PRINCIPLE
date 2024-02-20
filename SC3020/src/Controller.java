@@ -120,12 +120,13 @@ public class Controller {
 
         long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
         timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
+        System.out.println();
 
         // TODO: Before we start brute force, we need to "add" back the records that were deleted when we used B+ tree.
         // How to do that?
         // Brute force delete
         long startTimeBruteForce = System.nanoTime();
-        System.out.println("B+ Tree Version:");
+        System.out.println("Brute Force Version:");
 
         BruteforceExperiments.experiment5(dupDisk);
         long elapsedDelRecord = System.nanoTime() - startTimeBruteForce;
