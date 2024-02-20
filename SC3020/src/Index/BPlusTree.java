@@ -55,7 +55,6 @@ public class BPlusTree {
             System.out.print(" | " + root.getKey(i));
         }
         System.out.println();
-        System.out.println();
     }
 
     public int calculateNumberOfNodes() {
