@@ -76,7 +76,6 @@ public class BruteforceExperiments {
             }
         }
         float average = sum / recordResults.size();
-        float average = sum / recordResults.size();
 
         System.out
                 .println("Number of records with 30 000 <= numVotes <= 40 000: " + recordResults.size() + " records.");
