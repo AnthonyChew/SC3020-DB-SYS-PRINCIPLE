@@ -8,7 +8,11 @@ import Records.Record;
 import Utils.TsvReader;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Controller {
     private Disk disk;
@@ -50,7 +54,6 @@ public class Controller {
                 "and report statistics.***");
         addresses.forEach(address -> {
             Record record = disk.getRecord(address);
-            // for
             tree.insert(record.getRecordData().getNumVotes(), address);
         });
         BPlusTreeExperiments.experiment2(tree);
@@ -126,20 +129,64 @@ public class Controller {
     }
 
     public void debugBTree() {
-        BPlusTree test_tree = new BPlusTree(4);
-        int keys[] = {
-                1, 4, 7, 10, 17, 21, 31, 25, 19, 20, 28, 42
-        };
+        BPlusTree test_tree = new BPlusTree(25);
+
+        int[] keys = null;
+
+        // Generate random numbers to append to keys up to 1000
+        // Random random = new Random();
+        // int[] keys = new int[2000];
+        // for (int i = 0; i < 2000; i++) {
+        // keys[i] = i + random.nextInt(1000);
+        // }
+
+        // String fileName = "keys.txt";
+        // try {
+        // FileWriter writer = new FileWriter(fileName);
+        // for (int key : keys) {
+        // test_tree.insert(key, new Address(0, 0));
+        // writer.write(key + " ");
+        // }
+        // writer.close();
+        // System.out.println("Keys written to file: " + fileName);
+        // } catch (IOException e) {
+        // System.out.println("An error occurred while writing keys to file: " +
+        // e.getMessage());
+        // }
+
+        // Read keys from text file
+        String fileName = "keys.txt";
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            String[] keyStrings = line.split(" ");
+            keys = new int[keyStrings.length];
+            for (int i = 0; i < keyStrings.length; i++) {
+                keys[i] = Integer.parseInt(keyStrings[i]);
+            }
+            bufferedReader.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading keys from file: " + e.getMessage());
+        }
 
         for (int key : keys) {
             test_tree.insert(key, new Address(0, 0));
         }
 
-        test_tree.printTree();
-        System.out.println();
-        test_tree.printLeafs();
-        System.out.println();
+        // test_tree.printTree();
+        // System.out.println();
+        // test_tree.printLeafs();
+        // System.out.println();
 
-        test_tree.printKPLusOneKeys();
+        // for (int key : keys) {
+        // test_tree.insert(key, new Address(0, 0));
+        // }
+
+        // test_tree.printTree();
+        // System.out.println();
+        // test_tree.printLeafs();
+        // System.out.println();
+        // test_tree.printKPLusOneKeys();
     }
 }

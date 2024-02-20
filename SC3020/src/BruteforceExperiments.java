@@ -70,11 +70,14 @@ public class BruteforceExperiments {
                                     records[j].getRecordData().getNumVotes() <= 30778)) {
                         recordResults.add(records[j]);
                         sum += records[j].getRecordData().getAverageRating();
+                        sum += records[j].getRecordData().getAverageRating();
                     }
                 }
             }
         }
         float average = sum / recordResults.size();
+        float average = sum / recordResults.size();
+
         System.out
                 .println("Number of records with 30 000 <= numVotes <= 40 000: " + recordResults.size() + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");

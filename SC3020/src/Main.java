@@ -2,7 +2,6 @@ import Disks.Address;
 import Disks.Disk;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -51,5 +50,4 @@ public class Main {
             }
         } while (choice != 0);
     }
-
 }

@@ -141,9 +141,9 @@ public class InternalNode extends Node {
                 newInternalNode.setChild(this.numKeys - startShiftIndex, rightChild);
                 newInternalNode.setNumKeys(this.numKeys - startShiftIndex);
             } else { // middle -> shift right
-                for (int i = index - startShiftIndex - 1; i < this.numKeys - startShiftIndex - 1; i++) {
-                    newInternalNode.setKey(i + 1, newInternalNode.getKey(i));
-                    newInternalNode.setChild(i + 2, newInternalNode.getChild(i + 1));
+                for (int i = this.numKeys - startShiftIndex - 1; i > index - startShiftIndex - 1; i--) {
+                    newInternalNode.setKey(i, newInternalNode.getKey(i - 1));
+                    newInternalNode.setChild(i + 1, newInternalNode.getChild(i));
                 }
                 newInternalNode.setKey(index - startShiftIndex - 1, key);
                 newInternalNode.setChild(index - startShiftIndex, rightChild);

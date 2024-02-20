@@ -102,7 +102,7 @@ public class LeafNode extends Node {
 
     public void splitLeafNode(int key, Address value) {
         // index of min number of nodes in a leaf
-        int mid = (this.getOrder() / 2) - 1;
+        int mid = this.MIN_KEYS - 1;
 
         // find insert pos
         int index = 0;
@@ -195,7 +195,7 @@ public class LeafNode extends Node {
     }
 
     public void deleteAndShiftLeft(int deletePos) {
-        for (int i = deletePos; i < this.numKeys - 1; i++) {
+        for (int i = deletePos; i < this.numKeys; i++) {
             this.keys[i] = this.keys[i + 1];
             this.values[i] = this.values[i + 1];
         }
