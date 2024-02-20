@@ -1,10 +1,10 @@
 package Index;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import Disks.Address;
 import Disks.Disk;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class BPlusTree {
     private Node root;
@@ -52,7 +52,7 @@ public class BPlusTree {
         }
 
         for (int i = 0; i < root.getNumKeys(); i++) {
-            System.out.print(root.getKey(i) + " ");
+            System.out.print(" | " + root.getKey(i));
         }
         System.out.println();
         System.out.println();
