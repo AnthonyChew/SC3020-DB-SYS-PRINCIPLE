@@ -41,7 +41,7 @@ public class BruteforceExperiments {
         return recordResults;
     }
 
-    public static ArrayList<Record> experiment4(Disk disk) {
+    public static ArrayList<Record> experiment4(Disk disk, int start, int end) {
         /*
          * This method is the brute force method for experiment 4 to retrieve records
          * where 30 000 <= numVotes <= 40 000.
@@ -60,8 +60,8 @@ public class BruteforceExperiments {
                 Record[] records = blocks[i].getRecords();
                 for (int j = 0; j < records.length; j++) {
                     if (records[j] != null &&
-                            (records[j].getRecordData().getNumVotes() >= 30000 &&
-                                    records[j].getRecordData().getNumVotes() <= 40000)) {
+                            (records[j].getRecordData().getNumVotes() >= start &&
+                                    records[j].getRecordData().getNumVotes() <= end)) {
                         recordResults.add(records[j]);
                         sum += records[j].getRecordData().getAverageRating();
                     }

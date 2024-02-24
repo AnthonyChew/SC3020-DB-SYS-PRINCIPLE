@@ -8,8 +8,12 @@ import Records.Record;
 import Records.RecordData;
 import Records.RecordHeader;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Test1 {
     // Global data for reuse
@@ -119,7 +123,7 @@ public class Test1 {
 
     }
 
-    public void testBPlusTree() {
+    public void testBPlusTreeInsert() {
         int keys[] = new int[] { 25, 16, 17, 60, 9, 21, 18, 12, 17, 16, 62, 14, 159 };
 
         BPlusTree tree = new BPlusTree(25);
@@ -132,4 +136,115 @@ public class Test1 {
 
         tree.printTree();
     }
+
+    public void debugBTree() {
+        BPlusTree test_tree = new BPlusTree(25);
+
+        int[] keys = null;
+
+        // Generate random numbers to append to keys up to 1000
+        // Random random = new Random();
+        // int[] keys = new int[2000];
+        // for (int i = 0; i < 2000; i++) {
+        // keys[i] = i + random.nextInt(1000);
+        // }
+
+        // String fileName = "keys.txt";
+        // try {
+        // FileWriter writer = new FileWriter(fileName);
+        // for (int key : keys) {
+        // test_tree.insert(key, new Address(0, 0));
+        // writer.write(key + " ");
+        // }
+        // writer.close();
+        // System.out.println("Keys written to file: " + fileName);
+        // } catch (IOException e) {
+        // System.out.println("An error occurred while writing keys to file: " +
+        // e.getMessage());
+        // }
+
+        // Read keys from text file
+        String fileName = "keys.txt";
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            String[] keyStrings = line.split(" ");
+            keys = new int[keyStrings.length];
+            for (int i = 0; i < keyStrings.length; i++) {
+                keys[i] = Integer.parseInt(keyStrings[i]);
+            }
+            bufferedReader.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading keys from file: " + e.getMessage());
+        }
+
+        for (int key : keys) {
+            test_tree.insert(key, new Address(0, 0));
+        }
+
+        // test_tree.printTree();
+        // System.out.println();
+        // test_tree.printLeafs();
+        // System.out.println();
+
+        // for (int key : keys) {
+        // test_tree.insert(key, new Address(0, 0));
+        // }
+
+        // test_tree.printTree();
+        // System.out.println();
+        // test_tree.printLeafs();
+        // System.out.println();
+        // test_tree.printKPLusOneKeys();
+    }
+
+    public static void testBPlusTree() {
+        BPlusTree bPlusTree = new BPlusTree(4); // Assuming BPlusTree class exists
+        Scanner scanner = new Scanner(System.in);
+        String userInput;
+        Disk disk = new Disk();
+
+        while (true) {
+            System.out.println("Enter your choice (i/d/q/e):");
+            userInput = scanner.nextLine();
+
+            if (userInput.equalsIgnoreCase("i")) {
+                System.out.println("Enter the key to insert:");
+                int key = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline character
+
+                // Insert the key into the B+ tree
+                Address addr = disk.addRecord(new Record(new RecordHeader(key), new RecordData("tt00001", key, key)));
+                bPlusTree.insert(key, addr);
+                System.out.println("Key inserted successfully.");
+                bPlusTree.printTree();
+            } else if (userInput.equalsIgnoreCase("d")) {
+                System.out.println("Enter the key to delete:");
+                int key = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline character
+
+                // Delete the key from the B+ tree
+                bPlusTree.delete(key, disk);
+                System.out.println("Key deleted successfully.");
+                bPlusTree.printTree();
+            } else if (userInput.equalsIgnoreCase("q")) {
+                System.out.println("Enter the key to query:");
+                int key = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline character
+
+                // Query the B+ tree for the key
+                bPlusTree.query(key, disk);
+            } else if (userInput.equalsIgnoreCase("e")) {
+                break;
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+            }
+
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+
 }

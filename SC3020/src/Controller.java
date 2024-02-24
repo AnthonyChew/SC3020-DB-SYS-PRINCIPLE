@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class Controller {
                 " and report statistics.***");
 
         long startTimeBPlusTree = System.nanoTime();
-        BPlusTreeExperiments.experiment3(tree, disk);
+        BPlusTreeExperiments.experiment3(tree, disk, 500);
         long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
         timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
         System.out.println();
@@ -80,14 +81,14 @@ public class Controller {
                 " and report statistics.***");
 
         long startTimeBPlusTree = System.nanoTime();
-        BPlusTreeExperiments.experiment4(tree, disk);
+        BPlusTreeExperiments.experiment4(tree, disk, 20000, 30000);
         long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
         timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
         System.out.println();
 
         long startTimeBruteForce = System.nanoTime();
         // Brute force linear scan
-        ArrayList<Record> bruteforceResults = BruteforceExperiments.experiment4(this.disk);
+        ArrayList<Record> bruteforceResults = BruteforceExperiments.experiment4(this.disk, 20000, 30000);
         long elapsedTimeBruteForce = System.nanoTime() - startTimeBruteForce;
         timeTaken(elapsedTimeBruteForce, "Total time taken for brute force: ");
         System.out.println();
@@ -108,8 +109,12 @@ public class Controller {
                     dupAddress.add(address);
                 });
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the key to be deleted: ");
+        int keyToDelete = scanner.nextInt();
+
         long startTimeBPlusTree = System.nanoTime();
-        BPlusTreeExperiments.experiment5(tree, disk);
+        BPlusTreeExperiments.experiment5(tree, disk, keyToDelete);
 
         long elapsedTimeBPlusTree = System.nanoTime() - startTimeBPlusTree;
         timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
@@ -117,74 +122,12 @@ public class Controller {
         // TODO: Before we start brute force, we need to "add" back the records that
         // were deleted when we used B+ tree.
         // How to do that?
-        long startTimeBruteForce = System.nanoTime();
-        // Brute force search through record
-        BruteforceExperiments.experiment5(dupDisk);
-        long elapsedDelRecord = System.nanoTime() - startTimeBruteForce;
-        timeTaken(elapsedDelRecord, "Total time taken for brute force: ");
-        System.out.println();
-    }
-
-    public void debugBTree() {
-        BPlusTree test_tree = new BPlusTree(25);
-
-        int[] keys = null;
-
-        // Generate random numbers to append to keys up to 1000
-        // Random random = new Random();
-        // int[] keys = new int[2000];
-        // for (int i = 0; i < 2000; i++) {
-        // keys[i] = i + random.nextInt(1000);
-        // }
-
-        // String fileName = "keys.txt";
-        // try {
-        // FileWriter writer = new FileWriter(fileName);
-        // for (int key : keys) {
-        // test_tree.insert(key, new Address(0, 0));
-        // writer.write(key + " ");
-        // }
-        // writer.close();
-        // System.out.println("Keys written to file: " + fileName);
-        // } catch (IOException e) {
-        // System.out.println("An error occurred while writing keys to file: " +
-        // e.getMessage());
-        // }
-
-        // Read keys from text file
-        String fileName = "keys.txt";
-        try {
-            FileReader fileReader = new FileReader(fileName);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line = bufferedReader.readLine();
-            String[] keyStrings = line.split(" ");
-            keys = new int[keyStrings.length];
-            for (int i = 0; i < keyStrings.length; i++) {
-                keys[i] = Integer.parseInt(keyStrings[i]);
-            }
-            bufferedReader.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred while reading keys from file: " + e.getMessage());
-        }
-
-        for (int key : keys) {
-            test_tree.insert(key, new Address(0, 0));
-        }
-
-        // test_tree.printTree();
+        // long startTimeBruteForce = System.nanoTime();
+        // // Brute force search through record
+        // BruteforceExperiments.experiment5(dupDisk);
+        // long elapsedDelRecord = System.nanoTime() - startTimeBruteForce;
+        // timeTaken(elapsedDelRecord, "Total time taken for brute force: ");
         // System.out.println();
-        // test_tree.printLeafs();
-        // System.out.println();
-
-        // for (int key : keys) {
-        // test_tree.insert(key, new Address(0, 0));
-        // }
-
-        // test_tree.printTree();
-        // System.out.println();
-        // test_tree.printLeafs();
-        // System.out.println();
-        // test_tree.printKPLusOneKeys();
     }
 
     public static void timeTaken(long elapsedTime, String msg) {

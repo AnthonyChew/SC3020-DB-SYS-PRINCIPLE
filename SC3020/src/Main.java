@@ -1,5 +1,6 @@
 import Disks.Address;
 import Disks.Disk;
+import UnitTest.Test1;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -18,7 +19,7 @@ public class Main {
                     "2) Experiment 2 - Build B+ Tree on 'numVotes' by inserting records sequentially and report statistics.");
             System.out.println("3) Experiment 3 - Retrieve movies with 'numVotes' equal to 500 and report statistics.");
             System.out.println(
-                    "4) Experiment 4 - Retrieve movies with 'numVotes' ranging from [30 000, 40 000] and report statistics.");
+                    "4) Experiment 4 - Retrieve movies with 'numVotes' ranging from [30 000, 40000] and report statistics.");
             System.out.println(
                     "5) Experiment 5 - Delete movies with 'numVotes' equal to 1000, update B+ tree and report statistics.");
             System.out.println("\n0) Exit.");
@@ -43,7 +44,7 @@ public class Main {
                     controller.experiment5();
                     break;
                 case 6:
-                    controller.debugBTree();
+                    Test1.testBPlusTree();
                     break;
                 case 0:
                     break;
