@@ -1,7 +1,4 @@
 package Records;
-
-import Utils.CalculateSizeUtil;
-
 //Record data [18 bytes | tCosnt][4 bytes | averageRating][4 bytes | numVotes]
 public class RecordData {
     private char[] tConst; //18 bytes

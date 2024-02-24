@@ -1,7 +1,5 @@
 package Utils;
 
-import java.util.Date;
-
 public class CalculateSizeUtil {
     public static int getSize(Object obj) {
         int size = 0;
