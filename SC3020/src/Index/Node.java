@@ -153,5 +153,20 @@ public abstract class Node {
         return _this.getChild(this.getNumKeys());
     }
 
+    public int binarySearchInsertPos(int key) {
+        int left = 0;
+        int right = this.numKeys;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (this.keys[mid] < key) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+
     public abstract int getSubtreeLB();
 }

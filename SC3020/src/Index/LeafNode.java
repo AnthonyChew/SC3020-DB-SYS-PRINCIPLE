@@ -57,11 +57,9 @@ public class LeafNode extends Node {
         }
 
         // find the index where the key should be inserted
-        int index = 0;
-        while (index < this.numKeys && key > this.keys[index]) {
-            if (key == this.keys[index])
-                break;
-            index++;
+        int index = binarySearchInsertPos(key);
+        if (index == this.getOrder() - 1) {
+            System.out.println("Error: Index out of bounds");
         }
 
         // duplicate -> add to linked list
@@ -83,21 +81,20 @@ public class LeafNode extends Node {
         this.numKeys++;
     }
 
-    // Search for the Address mapped to the given key
     public int binarySearch(int key) {
+        // returns index of first key greater than or equal to key
         int left = 0;
         int right = this.numKeys - 1;
+
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (this.keys[mid] == key) {
-                return mid;
-            } else if (this.keys[mid] < key) {
+            if (this.keys[mid] < key) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
             }
         }
-        return -1;
+        return left;
     }
 
     public void splitLeafNode(int key, Address value) {
@@ -105,9 +102,13 @@ public class LeafNode extends Node {
         int mid = this.MIN_KEYS - 1;
 
         // find insert pos
-        int index = 0;
-        while (index < this.numKeys && key > this.keys[index]) {
-            index++;
+        // int index = 0;
+        // while (index < this.numKeys && key > this.keys[index]) {
+        // index++;
+        // }
+        int index = binarySearchInsertPos(key);
+        if (index == this.getOrder() - 1) {
+            System.out.println("Error: Index out of bounds");
         }
 
         // set new leaf node
@@ -154,14 +155,8 @@ public class LeafNode extends Node {
         LeafNode _leftSibling = (LeafNode) leftSibling;
         LeafNode _rightSibling = (LeafNode) rightSibling;
 
-        int index = -1;
-        for (int i = 0; i < this.numKeys; i++) {
-            if (this.keys[i] == key) {
-                index = i;
-                break;
-            }
-        }
-        if (index == -1)
+        int index = binarySearch(key);
+        if (index == this.numKeys)
             return false;
 
         List<Address> addresses = this.values[index];
@@ -195,10 +190,12 @@ public class LeafNode extends Node {
     }
 
     public void deleteAndShiftLeft(int deletePos) {
-        for (int i = deletePos; i < this.numKeys; i++) {
+        for (int i = deletePos; i < this.numKeys - 1; i++) {
             this.keys[i] = this.keys[i + 1];
             this.values[i] = this.values[i + 1];
         }
+        this.keys[numKeys - 1] = Integer.MAX_VALUE;
+        this.values[numKeys - 1] = null;
     }
 
     public void deleteAndShiftRight(int deletePos) {
@@ -211,14 +208,16 @@ public class LeafNode extends Node {
     public void deleteAndBorrowFromLeft(int deletePos, LeafNode leftSibling) {
         this.deleteAndShiftRight(deletePos);
         this.keys[0] = leftSibling.getKey(leftSibling.getNumKeys() - 1);
-        this.values[0] = leftSibling.getValue(leftSibling.getNumKeys());
+        this.values[0] = leftSibling.getValue(leftSibling.getNumKeys() - 1);
+        leftSibling.setKey(leftSibling.getNumKeys() - 1, Integer.MAX_VALUE);
+        leftSibling.setValue(leftSibling.getNumKeys() - 1, null);
         leftSibling.setNumKeys(leftSibling.getNumKeys() - 1);
     }
 
     public void deleteAndBorrowFromRight(int deletePos, LeafNode rightSibling) {
         this.deleteAndShiftLeft(deletePos);
         this.keys[this.numKeys - 1] = rightSibling.getKey(0);
-        this.values[this.numKeys] = rightSibling.getValue(0);
+        this.values[this.numKeys - 1] = rightSibling.getValue(0);
         rightSibling.deleteAndShiftLeft(0);
         rightSibling.setNumKeys(rightSibling.getNumKeys() - 1);
     }
@@ -263,20 +262,12 @@ public class LeafNode extends Node {
         }
 
         int index = parent.getParent().getChildIndex(parent);
-        System.out.println(index);
-
         return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
     }
 
     public void query(int key, Disk disk, int indexBlocksAccessed) {
-        int index = -1;
-        for (int i = 0; i < this.numKeys; i++) {
-            if (this.keys[i] == key) {
-                index = i;
-                break;
-            }
-        }
-        if (index == -1) {
+        int index = binarySearch(key);
+        if (index == this.numKeys) {
             System.out.println("Query with key: " + key + " not found.");
             return;
         }
@@ -296,14 +287,8 @@ public class LeafNode extends Node {
     }
 
     public void rangeQuery(int startKey, int endKey, Disk disk, int indexBlocksAccessed) {
-        int index = -1;
-        for (int i = 0; i < this.numKeys; i++) {
-            if (this.keys[i] >= startKey) {
-                index = i;
-                break;
-            }
-        }
-        if (index == -1) {
+        int index = binarySearch(startKey);
+        if (index == this.numKeys) {
             System.out.println("Query with start key: " + startKey + " not found.");
             return;
         }

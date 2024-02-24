@@ -53,10 +53,7 @@ public class InternalNode extends Node {
         if (this.isFull()) {
             splitInternalNode(rightChild.getSubtreeLB(), rightChild);
         } else {
-            int index = 0;
-            while (index < this.getNumKeys() && key > this.getKey(index)) {
-                index++;
-            }
+            int index = binarySearchInsertPos(key);
 
             // Shift the keys and values to the right
             for (int i = this.numKeys - 1; i >= index; i--) {
@@ -87,10 +84,7 @@ public class InternalNode extends Node {
         int mid = this.MIN_KEYS - 1;
 
         // find insert pos
-        int index = 0;
-        while (index < this.numKeys && key > this.keys[index]) {
-            index++;
-        }
+        int index = binarySearchInsertPos(key);
         InternalNode newInternalNode = new InternalNode(this.getOrder());
 
         // first half including mid -> start copying from mid over to new node
@@ -360,7 +354,8 @@ public class InternalNode extends Node {
             leftSibling.setChild(leftSibling.getNumChildren() + i, this.children[i]); // node index set by setChild()
             this.children[i].setParent(leftSibling);
         }
-        leftSibling.setNumKeys(leftSibling.getNumKeys() + this.numKeys);
+        leftSibling.setNumKeys(leftSibling.getNumKeys() + this.numChildren); // we copy the leftmost ptr over -> extra 1
+                                                                             // key
         leftSibling.setNumChildren(leftSibling.getNumChildren() + this.numChildren);
         this.numKeys = 0;
         this.numChildren = 0;
@@ -371,13 +366,14 @@ public class InternalNode extends Node {
         this.deleteAndShiftLeft(deletePos);
         this.numKeys--;
         this.numChildren--;
-        for (int i = 0; i < rightSibling.getNumKeys(); i++) {
-            this.keys[this.numKeys + i] = rightSibling.getKey(i);
+        for (int i = 0; i <= rightSibling.getNumKeys(); i++) {
+            if (i < rightSibling.getNumKeys())
+                this.keys[this.numKeys + i] = rightSibling.getKey(i);
             this.children[this.numChildren + i] = rightSibling.getChild(i);
             rightSibling.getChild(i).setNodeIndex(this.numChildren + i);
             rightSibling.getChild(i).setParent(this);
         }
-        this.numKeys += rightSibling.getNumKeys();
+        this.numKeys += rightSibling.getNumChildren(); // we copy the leftmost ptr over -> extra 1 key
         this.numChildren += rightSibling.getNumChildren();
         rightSibling.setNumKeys(0);
         rightSibling.setNumChildren(0);
