@@ -43,7 +43,8 @@ public class Test1 {
         }
 
         if (block.deleteRecord(5)) {
-            System.out.println("Inserted to empty block! Blocks.Block full: " + block.isFull() + "\nCurrent index : " + block.getCurrIndex());
+            System.out.println("Inserted to empty block! Blocks.Block full: " + block.isFull() + "\nCurrent index : "
+                    + block.getCurrIndex());
 
             block.addRecord(0, record);
 

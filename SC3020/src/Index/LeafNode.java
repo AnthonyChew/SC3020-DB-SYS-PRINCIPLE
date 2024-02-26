@@ -1,11 +1,11 @@
 package Index;
 
+import Disks.Address;
+import Disks.Disk;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import Disks.Address;
-import Disks.Disk;
 
 // minimum -> (order) // 2 keys
 public class LeafNode extends Node {
@@ -263,7 +263,7 @@ public class LeafNode extends Node {
         return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
     }
 
-    public void query(int key, Disk disk, int indexBlocksAccessed) {
+    public void query(int key, Disk disk, int indexNodesAccessed) {
         int index = binarySearch(key);
         if (index == this.numKeys) {
             System.out.println("Query with key: " + key + " not found.");
@@ -279,12 +279,12 @@ public class LeafNode extends Node {
         }
         float average = sum / dataBlocks;
 
-        System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
-        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
+        System.out.println("Number of records with numVotes = 500: " + dataBlocks + " records.");
+        System.out.println("Number of index blocks accessed: " + indexNodesAccessed + " blocks.");
         System.out.println("Average of average ratings: " + average);
     }
 
-    public void rangeQuery(int startKey, int endKey, Disk disk, int indexBlocksAccessed) {
+    public void rangeQuery(int startKey, int endKey, Disk disk, int indexNodesAccessed) {
         int index = binarySearch(startKey);
         if (index == this.numKeys) {
             System.out.println("Query with start key: " + startKey + " not found.");
@@ -305,12 +305,14 @@ public class LeafNode extends Node {
             if (index == cur.getNumKeys()) {
                 cur = cur.getNextLeafNode();
                 index = 0;
-                indexBlocksAccessed++;
+                indexNodesAccessed++;
             }
         }
         float average = sum / dataBlocks;
 
-        System.out.println("Number of index blocks accessed: " + indexBlocksAccessed + " blocks.");
+        System.out.println(
+                "Number of records with " + startKey + "<= numVotes <= " + endKey + ": " + dataBlocks + " records.");
+        System.out.println("Number of index nodes accessed: " + indexNodesAccessed + " blocks.");
         System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
         System.out.println("Sum of average ratings: " + sum);
         System.out.println("Average of average ratings: " + average);

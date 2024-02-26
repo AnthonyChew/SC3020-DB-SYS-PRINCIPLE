@@ -1,9 +1,5 @@
-import java.util.ArrayList;
-
-import Disks.Address;
 import Disks.Disk;
 import Index.BPlusTree;
-import Utils.TsvReader;
 
 public class BPlusTreeExperiments {
     public static void experiment2(BPlusTree tree) {
@@ -25,6 +21,7 @@ public class BPlusTreeExperiments {
 
     public static void experiment5(BPlusTree tree, Disk disk, int key) {
         tree.delete(key, disk);
+        System.out.println("*** New B+ Tree ***");
         System.out.println("Number of nodes: " + tree.calculateNumberOfNodes() + " nodes.");
         System.out
                 .println("Number of levels: " + tree.calculateDepth() + " levels.");

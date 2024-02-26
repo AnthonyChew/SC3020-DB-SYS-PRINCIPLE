@@ -1,7 +1,5 @@
 package Disks;
 
-import Records.Record;
-
 public class Address {
     private int block;
     private int index;

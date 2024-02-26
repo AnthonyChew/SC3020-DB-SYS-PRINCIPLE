@@ -13,13 +13,16 @@ public class Record {
     private RecordHeader recordHeader;
     private RecordData recordData;
 
+    //Constructor
+    public Record(RecordHeader recordHeader, RecordData recordData) {
+        this.recordHeader = recordHeader;
+        this.recordData = recordData;
+        this.recordHeader.setRecordSize(calculateRecordSize() + CalculateSizeUtil.getSize(calculateRecordSize()));
+    }
+
     //Getter
     public RecordHeader getRecordHeader() {
         return recordHeader;
-    }
-
-    public RecordData getRecordData() {
-        return recordData;
     }
 
     //Update size when Header is changed
@@ -28,15 +31,12 @@ public class Record {
         this.recordHeader.setRecordSize(calculateRecordSize() + CalculateSizeUtil.getSize(calculateRecordSize()));
     }
 
-    //Update size when record is changed
-    public void setRecordData(RecordData recordData) {
-        this.recordData = recordData;
-        this.recordHeader.setRecordSize(calculateRecordSize() + CalculateSizeUtil.getSize(calculateRecordSize()));
+    public RecordData getRecordData() {
+        return recordData;
     }
 
-    //Constructor
-    public Record(RecordHeader recordHeader, RecordData recordData) {
-        this.recordHeader = recordHeader;
+    //Update size when record is changed
+    public void setRecordData(RecordData recordData) {
         this.recordData = recordData;
         this.recordHeader.setRecordSize(calculateRecordSize() + CalculateSizeUtil.getSize(calculateRecordSize()));
     }
@@ -46,7 +46,7 @@ public class Record {
         System.out.println("Record pointer : " + this.getRecordHeader().getRecordPointer() +
                 "\nRecord Data : " + new String(this.getRecordData().gettConst()) + "\n" +
                 this.getRecordData().getAverageRating() + "\n" +
-                this.getRecordData().getNumVotes()  + "\n");
+                this.getRecordData().getNumVotes() + "\n");
     }
 
     //Calculate record size
