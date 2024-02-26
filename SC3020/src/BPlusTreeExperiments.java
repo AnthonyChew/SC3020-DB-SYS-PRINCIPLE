@@ -21,6 +21,7 @@ public class BPlusTreeExperiments {
 
     public static void experiment5(BPlusTree tree, Disk disk) {
         tree.delete(1000, disk);
+        System.out.println("*** New B+ Tree ***");
         System.out.println("Number of nodes: " + tree.calculateNumberOfNodes() + " nodes.");
         System.out
                 .println("Number of levels: " + tree.calculateDepth() + " levels.");
