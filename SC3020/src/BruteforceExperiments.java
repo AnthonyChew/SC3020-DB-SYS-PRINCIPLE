@@ -73,8 +73,7 @@ public class BruteforceExperiments {
         System.out.println(
                 "Number of records with " + startingRange
                         + " <= numVotes <= " + endingRange
-                        + ": " + recordResults.size() + " records."
-        );
+                        + ": " + recordResults.size() + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");
         System.out.println("Sum of averageRating of records returned: " + sum);
         System.out.println("Average of averageRating of records returned: " + average);
@@ -101,7 +100,8 @@ public class BruteforceExperiments {
                         // INSTEAD OF THROUGH ADDRESS
                         if (disk.deleteRecord(i, j)) {
                             noOfDeletedRecords++;
-//                            System.out.println("Deleting record from block(" + i + "), record(" + j + ").");
+                            // System.out.println("Deleting record from block(" + i + "), record(" + j +
+                            // ").");
                         } else {
                             System.out.println("Failed to delete record from block(" + i + "), record(" + j + ").");
                         }

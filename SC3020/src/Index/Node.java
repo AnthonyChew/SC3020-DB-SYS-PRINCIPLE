@@ -78,33 +78,33 @@ public abstract class Node {
     }
 
     public void query(int key, Disk disk) {
-        int indexBlocks = 0;
+        int indexNodes = 0;
         boolean isRootLeaf = this instanceof LeafNode;
 
         Node cur = this;
         while (cur instanceof InternalNode) {
             InternalNode _cur = (InternalNode) cur;
             cur = _cur.findChild(key);
-            indexBlocks++;
+            indexNodes++;
         }
 
         LeafNode leaf = (LeafNode) cur;
-        leaf.query(key, disk, (isRootLeaf ? 1 : indexBlocks + 1));
+        leaf.query(key, disk, (isRootLeaf ? 1 : indexNodes + 1));
     }
 
     public void rangeQuery(int startKey, int endKey, Disk disk) {
-        int indexBlocks = 0;
+        int indexNodes = 0;
         boolean isRootLeaf = this instanceof LeafNode;
 
         Node cur = this;
         while (cur instanceof InternalNode) {
             InternalNode _cur = (InternalNode) cur;
             cur = _cur.findChild(startKey);
-            indexBlocks++;
+            indexNodes++;
         }
 
         LeafNode leaf = (LeafNode) cur;
-        leaf.rangeQuery(startKey, endKey, disk, (isRootLeaf ? 1 : indexBlocks + 1));
+        leaf.rangeQuery(startKey, endKey, disk, (isRootLeaf ? 1 : indexNodes + 1));
     }
 
     public boolean delete(int key, Disk disk) {
@@ -151,6 +151,21 @@ public abstract class Node {
             }
         }
         return _this.getChild(this.getNumKeys());
+    }
+
+    public int binarySearchInsertPos(int key) {
+        int left = 0;
+        int right = this.numKeys;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (this.keys[mid] < key) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
     }
 
     public abstract int getSubtreeLB();
