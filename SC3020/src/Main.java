@@ -43,9 +43,6 @@ public class Main {
                 case 5:
                     controller.experiment5();
                     break;
-                case 6:
-                    Test1.testBPlusTree();
-                    break;
                 case 0:
                     break;
             }
