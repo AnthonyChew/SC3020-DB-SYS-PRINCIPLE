@@ -280,7 +280,8 @@ public class LeafNode extends Node {
         float average = sum / dataBlocks;
 
         System.out.println("Number of records with numVotes = 500: " + dataBlocks + " records.");
-        System.out.println("Number of index blocks accessed: " + indexNodesAccessed + " blocks.");
+        System.out.println("Number of index nodes accessed: " + indexNodesAccessed + " nodes.");
+        System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
         System.out.println("Average of average ratings: " + average);
     }
 

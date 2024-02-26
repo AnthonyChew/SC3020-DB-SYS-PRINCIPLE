@@ -129,9 +129,6 @@ public class Controller {
                 timeTaken(elapsedTimeBPlusTree, "Total time taken for B+ Tree: ");
                 System.out.println();
 
-                // TODO: Before we start brute force, we need to "add" back the records that
-                // were deleted when we used B+ tree.
-                // How to do that?
                 // Brute force delete
                 long startTimeBruteForce = System.nanoTime();
                 System.out.println("Brute Force Version:");
@@ -140,67 +137,5 @@ public class Controller {
                 long elapsedDelRecord = System.nanoTime() - startTimeBruteForce;
                 timeTaken(elapsedDelRecord, "Total time taken for brute force: ");
                 System.out.println();
-        }
-
-        public void debugBTree() {
-                BPlusTree test_tree = new BPlusTree(25);
-
-                int[] keys = null;
-
-                // Generate random numbers to append to keys up to 1000
-                // Random random = new Random();
-                // int[] keys = new int[2000];
-                // for (int i = 0; i < 2000; i++) {
-                // keys[i] = i + random.nextInt(1000);
-                // }
-
-                // String fileName = "keys.txt";
-                // try {
-                // FileWriter writer = new FileWriter(fileName);
-                // for (int key : keys) {
-                // test_tree.insert(key, new Address(0, 0));
-                // writer.write(key + " ");
-                // }
-                // writer.close();
-                // System.out.println("Keys written to file: " + fileName);
-                // } catch (IOException e) {
-                // System.out.println("An error occurred while writing keys to file: " +
-                // e.getMessage());
-                // }
-
-                // Read keys from text file
-                String fileName = "keys.txt";
-                try {
-                        FileReader fileReader = new FileReader(fileName);
-                        BufferedReader bufferedReader = new BufferedReader(fileReader);
-                        String line = bufferedReader.readLine();
-                        String[] keyStrings = line.split(" ");
-                        keys = new int[keyStrings.length];
-                        for (int i = 0; i < keyStrings.length; i++) {
-                                keys[i] = Integer.parseInt(keyStrings[i]);
-                        }
-                        bufferedReader.close();
-                } catch (IOException e) {
-                        System.out.println("An error occurred while reading keys from file: " + e.getMessage());
-                }
-
-                for (int key : keys) {
-                        test_tree.insert(key, new Address(0, 0));
-                }
-
-                // test_tree.printTree();
-                // System.out.println();
-                // test_tree.printLeafs();
-                // System.out.println();
-
-                // for (int key : keys) {
-                // test_tree.insert(key, new Address(0, 0));
-                // }
-
-                // test_tree.printTree();
-                // System.out.println();
-                // test_tree.printLeafs();
-                // System.out.println();
-                // test_tree.printKPLusOneKeys();
         }
 }
