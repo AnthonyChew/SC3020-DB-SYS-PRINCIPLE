@@ -101,11 +101,6 @@ public class LeafNode extends Node {
         // index of min number of nodes in a leaf
         int mid = this.MIN_KEYS - 1;
 
-        // find insert pos
-        // int index = 0;
-        // while (index < this.numKeys && key > this.keys[index]) {
-        // index++;
-        // }
         int index = binarySearchInsertPos(key);
         if (index == this.getOrder() - 1) {
             System.out.println("Error: Index out of bounds");
@@ -159,12 +154,15 @@ public class LeafNode extends Node {
         if (index == this.numKeys)
             return false;
 
+        int numDataBlocks = 0;
         List<Address> addresses = this.values[index];
-        addresses.forEach(
-                address -> {
-                    System.out.println("Deleting record with address: " + address);
-                    disk.deleteRecord(address);
-                });
+        for (Address address : addresses) {
+            // System.out.println("Deleting record with address: " + address);
+            disk.deleteRecord(address);
+            numDataBlocks++;
+        }
+        System.out.println("Number of data blocks accessed: " + numDataBlocks + " blocks.");
+        System.out.println("Number of records deleted: " + numDataBlocks + " records.");
 
         // case 1: simple delete
         if (this.numKeys - 1 >= this.MIN_KEYS) {
