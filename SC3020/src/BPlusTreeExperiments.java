@@ -16,7 +16,7 @@ public class BPlusTreeExperiments {
     }
 
     public static void experiment4(BPlusTree tree, Disk disk, int start, int end) {
-        tree.rangeQuery(20000, 30000, disk);
+        tree.rangeQuery(start, end, disk);
     }
 
     public static void experiment5(BPlusTree tree, Disk disk, int key) {

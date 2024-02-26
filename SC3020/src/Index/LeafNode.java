@@ -102,9 +102,6 @@ public class LeafNode extends Node {
         int mid = this.MIN_KEYS - 1;
 
         int index = binarySearchInsertPos(key);
-        if (index == this.getOrder() - 1) {
-            System.out.println("Error: Index out of bounds");
-        }
 
         // set new leaf node
         LeafNode newLeafNode = new LeafNode(this.getOrder());
@@ -312,10 +309,10 @@ public class LeafNode extends Node {
         float average = sum / dataBlocks;
 
         System.out.println(
-                "Number of records with " + startKey + "<= numVotes <= " + endKey + ": " + dataBlocks + " records.");
+                "Number of records with " + startKey + " <= numVotes <= " + endKey + ": " + dataBlocks + " records.");
         System.out.println("Number of index nodes accessed: " + indexNodesAccessed + " blocks.");
         System.out.println("Number of data blocks accessed: " + dataBlocks + " blocks.");
-        System.out.println("Sum of average ratings: " + sum);
+        // System.out.println("Sum of average ratings: " + sum);
         System.out.println("Average of average ratings: " + average);
     }
 
