@@ -101,7 +101,7 @@ public class BruteforceExperiments {
                         // INSTEAD OF THROUGH ADDRESS
                         if (disk.deleteRecord(i, j)) {
                             noOfDeletedRecords++;
-                            System.out.println("Deleting record from block(" + i + "), record(" + j + ").");
+//                            System.out.println("Deleting record from block(" + i + "), record(" + j + ").");
                         } else {
                             System.out.println("Failed to delete record from block(" + i + "), record(" + j + ").");
                         }

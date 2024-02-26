@@ -167,7 +167,7 @@ public class LeafNode extends Node {
         List<Address> addresses = this.values[index];
         addresses.forEach(
                 address -> {
-                    System.out.println("Deleting record with address: " + address);
+//                    System.out.println("Deleting record with address: " + address);
                     disk.deleteRecord(address);
                 });
 
