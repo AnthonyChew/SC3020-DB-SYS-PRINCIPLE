@@ -20,7 +20,7 @@ public class RecordHeader {
     }
 
     // Setters
-    protected void setRecordSize(int recordSize) {
+    public void setRecordSize(int recordSize) {
         this.recordSize = recordSize;
     }
 }

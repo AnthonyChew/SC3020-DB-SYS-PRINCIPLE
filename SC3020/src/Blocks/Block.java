@@ -29,8 +29,8 @@ public class Block {
         return records;
     }
 
-    public byte getCurrIndex() {
-        return emptyFlag;
+    public int getCurrIndex() {
+        return ByteUtils.findFirstZeroBitPosition(emptyFlag) ;
     }
 
     //Add record into block
