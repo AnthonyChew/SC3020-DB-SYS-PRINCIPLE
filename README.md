@@ -7,8 +7,8 @@ Materials for submissions are stored in [Google Drive](https://drive.google.com/
 
 # Pre-requisite
 1. JDK Development Kit 17++
-2. java added into enviromental path 
+2. `java` added into enviromental path 
 
 # Execution instructions
 1. Navigate to folder /SC3020_portable
-2. run SC3020_portable.bat
+2. Run SC3020_portable.bat
