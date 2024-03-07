@@ -9,7 +9,7 @@ public class BruteforceExperiments {
      * This class stores the brute force experiments.
      */
     public static ArrayList<Record> experiment3(Disk disk, int range) {
-        /*
+        /**
          * This method is the brute force method for experiment 3 to retrieve records
          * where numVotes = 500.
          *
@@ -42,7 +42,7 @@ public class BruteforceExperiments {
     }
 
     public static ArrayList<Record> experiment4(Disk disk, int startingRange, int endingRange) {
-        /*
+        /**
          * This method is the brute force method for experiment 4 to retrieve records
          * where 30 000 <= numVotes <= 40 000.
          *
@@ -81,7 +81,7 @@ public class BruteforceExperiments {
     }
 
     public static void experiment5(Disk disk) {
-        /*
+        /**
          * This method is the brute force method for experiment 5 to delete records
          * where numVotes = 1000.
          *
@@ -100,8 +100,6 @@ public class BruteforceExperiments {
                         // INSTEAD OF THROUGH ADDRESS
                         if (disk.deleteRecord(i, j)) {
                             noOfDeletedRecords++;
-                            // System.out.println("Deleting record from block(" + i + "), record(" + j +
-                            // ").");
                         } else {
                             System.out.println("Failed to delete record from block(" + i + "), record(" + j + ").");
                         }
@@ -111,14 +109,6 @@ public class BruteforceExperiments {
         }
         System.out.println("Number of deleted records with numVotes = 1000: " + noOfDeletedRecords + " records.");
         System.out.println("Number of blocks accessed: " + noOfAccessedBlocks + " blocks.");
-        // for(Address address: addresses)
-        // {
-        // Record record = address.getRecord(disk, address.getBlock(),
-        // address.getIndex());
-        // if(record.getRecordData().getNumVotes() == 1000)
-        // {
-        // disk.deleteRecord(address);
-        // }
-        // }
+
     }
 }
