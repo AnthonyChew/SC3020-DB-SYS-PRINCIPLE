@@ -8,12 +8,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 // minimum -> (order) // 2 keys
+/**
+ * Represents a leaf node in a B+ tree.
+ */
 public class LeafNode extends Node {
     // private int[] values; // Will be replaced with the Address array instead
     private final int MIN_KEYS = this.getOrder() / 2;
     private List<Address>[] values;
     private LeafNode nextLeafNode;
 
+    /**
+     * Constructor for LeafNode.
+     * 
+     * @param order The order of the B+ tree.
+     */
     public LeafNode(int order) {
         super(order);
         this.values = new List[order - 1];
@@ -21,26 +29,59 @@ public class LeafNode extends Node {
         this.nextLeafNode = null;
     }
 
+    /**
+     * Returns the value at the specified index.
+     * 
+     * @param index The index of the value to return.
+     * @return The value at the specified index.
+     */
     public List<Address> getValue(int index) {
         return this.values[index];
     }
 
+    /**
+     * Sets the value at the specified index.
+     * 
+     * @param index The index at which the value should be set.
+     * @param value The value to set.
+     */
     public void setValue(int index, List<Address> value) {
         this.values[index] = value;
     }
 
+    /**
+     * Returns all values in the node.
+     * 
+     * @return An array of all values in the node.
+     */
     public List<Address>[] getValues() {
         return this.values;
     }
 
+    /**
+     * Returns the next leaf node.
+     * 
+     * @return The next leaf node.
+     */
     public LeafNode getNextLeafNode() {
         return this.nextLeafNode;
     }
 
+    /**
+     * Sets the next leaf node.
+     * 
+     * @param nextLeafNode The next leaf node.
+     */
     public void setNextLeafNode(LeafNode nextLeafNode) {
         this.nextLeafNode = nextLeafNode;
     }
 
+    /**
+     * Checks if the node contains the specified key.
+     * 
+     * @param key The key to check.
+     * @return True if the node contains the key, false otherwise.
+     */
     public boolean containsKey(int key) {
         for (int i = 0; i < this.numKeys; i++) {
             if (this.keys[i] == key) {
@@ -50,6 +91,12 @@ public class LeafNode extends Node {
         return false;
     }
 
+    /**
+     * Adds a key-value pair to the node.
+     * 
+     * @param key   The key to add.
+     * @param value The value to add.
+     */
     public void addKey(int key, Address value) {
         if (this.isFull() && !this.containsKey(key)) {
             this.splitLeafNode(key, value);
@@ -81,6 +128,13 @@ public class LeafNode extends Node {
         this.numKeys++;
     }
 
+    /**
+     * Performs a binary search for the specified key.
+     * 
+     * @param key The key to search for.
+     * @return The index of the first key greater than or equal to the specified
+     *         key.
+     */
     public int binarySearch(int key) {
         // returns index of first key greater than or equal to key
         int left = 0;
@@ -97,6 +151,12 @@ public class LeafNode extends Node {
         return left;
     }
 
+    /**
+     * Splits the leaf node.
+     * 
+     * @param key   The key to add.
+     * @param value The value to add.
+     */
     public void splitLeafNode(int key, Address value) {
         // index of min number of nodes in a leaf
         int mid = this.MIN_KEYS - 1;
@@ -143,6 +203,15 @@ public class LeafNode extends Node {
         this.getParent().addKey(newLeafNode.getSubtreeLB(), newLeafNode);
     }
 
+    /**
+     * Deletes a key from the node.
+     * 
+     * @param key          The key to delete.
+     * @param disk         The disk from which to delete the key.
+     * @param leftSibling  The left sibling of the node.
+     * @param rightSibling The right sibling of the node.
+     * @return True if the key was deleted, false otherwise.
+     */
     public boolean deleteKey(int key, Disk disk, Node leftSibling, Node rightSibling) {
         LeafNode _leftSibling = (LeafNode) leftSibling;
         LeafNode _rightSibling = (LeafNode) rightSibling;
@@ -162,7 +231,7 @@ public class LeafNode extends Node {
         System.out.println("Number of records deleted: " + numDataBlocks + " records.");
 
         // case 1: simple delete
-        if (this.numKeys - 1 >= this.MIN_KEYS) {
+        if (this.numKeys - 1 >= this.MIN_KEYS || this.getParent() == null) {
             deleteAndShiftLeft(index);
             this.numKeys--;
             return true;
@@ -177,13 +246,16 @@ public class LeafNode extends Node {
             this.mergeWithLeft(index, _leftSibling);
         } else if (rightSibling != null) { // case 4: merge with right sibling
             this.mergeWithRight(index, _rightSibling);
-        } else if (leftSibling == null && rightSibling == null) {
-            this.numKeys--;
         }
 
         return true;
     }
 
+    /**
+     * Deletes a key and shifts all keys to the left.
+     * 
+     * @param deletePos The position of the key to delete.
+     */
     public void deleteAndShiftLeft(int deletePos) {
         for (int i = deletePos; i < this.numKeys - 1; i++) {
             this.keys[i] = this.keys[i + 1];
@@ -193,6 +265,11 @@ public class LeafNode extends Node {
         this.values[numKeys - 1] = null;
     }
 
+    /**
+     * Deletes a key and shifts all keys to the right.
+     * 
+     * @param deletePos The position of the key to delete.
+     */
     public void deleteAndShiftRight(int deletePos) {
         for (int i = deletePos; i > 0; i--) {
             this.keys[i] = this.keys[i - 1];
@@ -200,6 +277,12 @@ public class LeafNode extends Node {
         }
     }
 
+    /**
+     * Deletes a key and borrows a key from the left sibling.
+     * 
+     * @param deletePos   The position of the key to delete.
+     * @param leftSibling The left sibling of the node.
+     */
     public void deleteAndBorrowFromLeft(int deletePos, LeafNode leftSibling) {
         this.deleteAndShiftRight(deletePos);
         this.keys[0] = leftSibling.getKey(leftSibling.getNumKeys() - 1);
@@ -209,6 +292,12 @@ public class LeafNode extends Node {
         leftSibling.setNumKeys(leftSibling.getNumKeys() - 1);
     }
 
+    /**
+     * Deletes a key and borrows a key from the right sibling.
+     * 
+     * @param deletePos    The position of the key to delete.
+     * @param rightSibling The right sibling of the node.
+     */
     public void deleteAndBorrowFromRight(int deletePos, LeafNode rightSibling) {
         this.deleteAndShiftLeft(deletePos);
         this.keys[this.numKeys - 1] = rightSibling.getKey(0);
@@ -217,6 +306,12 @@ public class LeafNode extends Node {
         rightSibling.setNumKeys(rightSibling.getNumKeys() - 1);
     }
 
+    /**
+     * Merges the node with its left sibling.
+     * 
+     * @param deletePos   The position of the key to delete.
+     * @param leftSibling The left sibling of the node.
+     */
     public void mergeWithLeft(int deletePos, LeafNode leftSibling) {
         this.deleteAndShiftLeft(deletePos);
         this.numKeys--;
@@ -230,6 +325,12 @@ public class LeafNode extends Node {
         this.setParent(null);
     }
 
+    /**
+     * Merges the node with its right sibling.
+     * 
+     * @param deletePos    The position of the key to delete.
+     * @param rightSibling The right sibling of the node.
+     */
     public void mergeWithRight(int deletePos, LeafNode rightSibling) {
         this.deleteAndShiftLeft(deletePos);
         this.numKeys--;
@@ -243,6 +344,12 @@ public class LeafNode extends Node {
         rightSibling.setParent(null);
     }
 
+    /**
+     * Returns the left sibling of this leaf node.
+     * 
+     * @return The left sibling of this leaf node, or null if this node is the
+     *         leftmost node.
+     */
     public LeafNode getLeftSibling() {
         InternalNode parent = this.getParent();
 
@@ -260,6 +367,14 @@ public class LeafNode extends Node {
         return ((InternalNode) parent.getParent().getChild(index - 1)).getRightMostLeafNode();
     }
 
+    /**
+     * Performs a query for a specific key in the B+ tree.
+     * 
+     * @param key                The key to search for.
+     * @param disk               The disk to search on.
+     * @param indexNodesAccessed The number of index nodes accessed during the
+     *                           search.
+     */
     public void query(int key, Disk disk, int indexNodesAccessed) {
         int index = binarySearch(key);
         if (index == this.numKeys) {
@@ -282,6 +397,15 @@ public class LeafNode extends Node {
         System.out.println("Average of average ratings: " + average);
     }
 
+    /**
+     * Performs a range query for a specific range of keys in the B+ tree.
+     * 
+     * @param startKey           The start key of the range.
+     * @param endKey             The end key of the range.
+     * @param disk               The disk to search on.
+     * @param indexNodesAccessed The number of index nodes accessed during the
+     *                           search.
+     */
     public void rangeQuery(int startKey, int endKey, Disk disk, int indexNodesAccessed) {
         int index = binarySearch(startKey);
         if (index == this.numKeys) {
@@ -316,6 +440,12 @@ public class LeafNode extends Node {
         System.out.println("Average of average ratings: " + average);
     }
 
+    /**
+     * Returns the lower bound of the subtree rooted at this node.
+     * 
+     * @return The key of the first key-value pair in the subtree rooted at this
+     *         node.
+     */
     public int getSubtreeLB() {
         return this.getKey(0);
     }

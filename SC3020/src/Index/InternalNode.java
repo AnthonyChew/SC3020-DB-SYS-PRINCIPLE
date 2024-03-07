@@ -1,18 +1,37 @@
 package Index;
 
 // minimum -> (order - 1) // 2 keys
+/**
+ * Represents an internal node in a B+ tree.
+ * Internal nodes are used to store keys and references to child nodes.
+ */
 public class InternalNode extends Node {
     private final int MIN_KEYS = (this.getOrder() - 1) / 2;
     private Node[] children;
     private int numChildren;
 
+    /**
+     * Constructs a new internal node with the specified order.
+     *
+     * @param order the order of the B+ tree
+     */
     public InternalNode(int order) {
         super(order);
         this.children = new Node[order];
         this.numChildren = 0;
     }
 
-    // Constructor for when the internal node is created from a split in the child
+    /**
+     * Constructs a new internal node with the specified order, key, left child, and
+     * right child.
+     * This constructor is used when the internal node is created from a split in
+     * the child.
+     *
+     * @param order      the order of the B+ tree
+     * @param key        the key to be added to the parent node
+     * @param leftChild  the left child node
+     * @param rightChild the right child node
+     */
     public InternalNode(int order, int key, Node leftChild, Node rightChild) {
         super(order);
         this.children = new Node[order];
@@ -28,27 +47,53 @@ public class InternalNode extends Node {
         this.numChildren += 2;
     }
 
+    /**
+     * Returns the number of children of this internal node.
+     *
+     * @return the number of children
+     */
     public int getNumChildren() {
         return this.numChildren;
     }
 
+    /**
+     * Sets the number of children of this internal node.
+     *
+     * @param numChildren the number of children
+     */
     public void setNumChildren(int numChildren) {
         this.numChildren = numChildren;
     }
 
+    /**
+     * Returns the child node at the specified index.
+     *
+     * @param index the index of the child node
+     * @return the child node at the specified index
+     */
     public Node getChild(int index) {
         return this.children[index];
     }
 
+    /**
+     * Sets the child node at the specified index.
+     *
+     * @param index the index of the child node
+     * @param child the child node to be set
+     */
     public void setChild(int index, Node child) {
         this.children[index] = child;
         child.setNodeIndex(index);
     }
 
-    // When we insert at InternalNode, it means the leaf node has
-    // split and we need to add a new key to the parent node
-    // Each addition of a key comes with a new right child
-    // We need to add the key and the right child to the parent node
+    /**
+     * Adds a new key and right child to this internal node.
+     * This method is called when a leaf node splits and a new key needs to be added
+     * to the parent node.
+     *
+     * @param key        the key to be added
+     * @param rightChild the right child node to be added
+     */
     public void addKey(int key, Node rightChild) {
         if (this.isFull()) {
             splitInternalNode(rightChild.getSubtreeLB(), rightChild);
@@ -74,12 +119,22 @@ public class InternalNode extends Node {
         this.updateKeys();
     }
 
+    /**
+     * Updates the keys of this internal node based on the subtree lower bounds of
+     * its children.
+     */
     public void updateKeys() {
         for (int i = 0; i < this.numKeys; i++) {
             this.keys[i] = this.children[i + 1].getSubtreeLB();
         }
     }
 
+    /**
+     * Splits this internal node by moving keys and children to a new internal node.
+     *
+     * @param key        the key to be inserted
+     * @param rightChild the right child node to be inserted
+     */
     public void splitInternalNode(int key, Node rightChild) {
         int mid = this.MIN_KEYS - 1;
 
@@ -161,6 +216,11 @@ public class InternalNode extends Node {
         this.getParent().addKey(newInternalNode.getSubtreeLB(), newInternalNode);
     }
 
+    /**
+     * Returns the rightmost leaf node in the subtree rooted at this internal node.
+     *
+     * @return the rightmost leaf node
+     */
     public LeafNode getRightMostLeafNode() {
         Node target = this.getChild(this.numChildren - 1);
 
@@ -172,6 +232,12 @@ public class InternalNode extends Node {
         return (LeafNode) target;
     }
 
+    /**
+     * Returns the index of the specified child node in this internal node.
+     *
+     * @param child the child node
+     * @return the index of the child node, or -1 if not found
+     */
     public int getChildIndex(Node child) {
         for (int i = 0; i < this.numChildren; i++) {
             if (this.children[i] == child) {
@@ -181,6 +247,9 @@ public class InternalNode extends Node {
         return -1;
     }
 
+    /**
+     * Rebalances this internal node by updating its children and keys.
+     */
     public void rebalance() {
         InternalNode leftSibling = this.getLeftSibling();
         InternalNode rightSibling = this.getRightSibling();
@@ -197,11 +266,16 @@ public class InternalNode extends Node {
             rightSibling.updateKeys();
     }
 
+    /**
+     * Returns the left sibling of this internal node.
+     *
+     * @return the left sibling, or null if not found
+     */
     public InternalNode getLeftSibling() {
         if (this.getParent() == null)
             return null;
 
-        nodeIndex = this.getNodeIndex();
+        int nodeIndex = this.getNodeIndex();
         if (nodeIndex == 0) {
             int levels = 1;
             int prevNodeIndex = this.nodeIndex;
@@ -230,11 +304,16 @@ public class InternalNode extends Node {
         return ((InternalNode) this.getParent().getChild(nodeIndex - 1));
     }
 
+    /**
+     * Returns the right sibling of this internal node.
+     *
+     * @return the right sibling, or null if not found
+     */
     public InternalNode getRightSibling() {
         if (this.getParent() == null)
             return null;
 
-        nodeIndex = this.getNodeIndex();
+        int nodeIndex = this.getNodeIndex();
         if (nodeIndex == this.getParent().getNumChildren() - 1) {
             int levels = 1;
             int prevNodeIndex = this.nodeIndex;
@@ -263,6 +342,15 @@ public class InternalNode extends Node {
         return ((InternalNode) this.getParent().getChild(nodeIndex + 1));
     }
 
+    /**
+     * Updates the children of the internal node by deleting any child that does not
+     * have the current node as its parent.
+     * If a child is deleted, it is replaced by the left sibling or the right
+     * sibling.
+     *
+     * @param leftSibling  the left sibling of the current node
+     * @param rightSibling the right sibling of the current node
+     */
     public void updateChildren(InternalNode leftSibling, InternalNode rightSibling) {
         for (int i = 0; i < this.numChildren; i++) {
             if (this.children[i].getParent() != this) {
@@ -272,6 +360,17 @@ public class InternalNode extends Node {
         }
     }
 
+    /**
+     * Deletes a child node at the specified position within the internal node.
+     * If possible, the method will perform a simple delete, borrow from a left or
+     * right sibling,
+     * or merge with a left or right sibling to maintain the minimum number of keys
+     * in the node.
+     *
+     * @param deletePos    the position of the child node to delete
+     * @param leftSibling  the left sibling of the internal node
+     * @param rightSibling the right sibling of the internal node
+     */
     public void deleteChild(int deletePos, InternalNode leftSibling, InternalNode rightSibling) {
         // case 1: is root or simple delete
         if (this.getParent() == null || this.numKeys - 1 >= this.MIN_KEYS) {
@@ -293,6 +392,12 @@ public class InternalNode extends Node {
         }
     }
 
+    /**
+     * Deletes a key at the given position and shifts all keys and children to the
+     * left.
+     * 
+     * @param deletePos The position of the key to delete.
+     */
     public void deleteAndShiftLeft(int deletePos) {
         // 2 cases -> index 0 and not 0
         for (int i = deletePos; i <= this.numKeys; i++) {
@@ -308,6 +413,12 @@ public class InternalNode extends Node {
         }
     }
 
+    /**
+     * Deletes a key at the given position and shifts all keys and children to the
+     * right.
+     * 
+     * @param deletePos The position of the key to delete.
+     */
     public void deleteAndShiftRight(int deletePos) {
         // 2 cases -> index 0 and not 0
         // index 0 -> will exit directly
@@ -323,6 +434,13 @@ public class InternalNode extends Node {
         }
     }
 
+    /**
+     * Deletes a key at the given position, shifts all keys and children to the
+     * right, and borrows a node from the left sibling.
+     * 
+     * @param deletePos   The position of the key to delete.
+     * @param leftSibling The left sibling to borrow a node from.
+     */
     public void deleteAndBorrowFromLeft(int deletePos, InternalNode leftSibling) {
         this.deleteAndShiftRight(deletePos);
         Node borrow = leftSibling.getChild(leftSibling.getNumChildren() - 1);
@@ -333,6 +451,13 @@ public class InternalNode extends Node {
         leftSibling.setNumChildren(leftSibling.getNumChildren() - 1);
     }
 
+    /**
+     * Deletes a key at the given position, shifts all keys and children to the
+     * left, and borrows a node from the right sibling.
+     * 
+     * @param deletePos    The position of the key to delete.
+     * @param rightSibling The right sibling to borrow a node from.
+     */
     public void deleteAndBorrowFromRight(int deletePos, InternalNode rightSibling) {
         this.deleteAndShiftLeft(deletePos);
         Node borrow = rightSibling.getChild(0);
@@ -345,6 +470,12 @@ public class InternalNode extends Node {
         rightSibling.setNumChildren(rightSibling.getNumChildren() - 1);
     }
 
+    /**
+     * Merges the current node with its left sibling.
+     * 
+     * @param deletePos   The position of the key to delete before merging.
+     * @param leftSibling The left sibling to merge with.
+     */
     public void mergeWithLeft(int deletePos, InternalNode leftSibling) {
         this.deleteAndShiftLeft(deletePos);
         this.numKeys--;
@@ -362,6 +493,12 @@ public class InternalNode extends Node {
         this.setParent(null);
     }
 
+    /**
+     * Merges the current node with its right sibling.
+     * 
+     * @param deletePos    The position of the key to delete before merging.
+     * @param rightSibling The right sibling to merge with.
+     */
     public void mergeWithRight(int deletePos, InternalNode rightSibling) {
         this.deleteAndShiftLeft(deletePos);
         this.numKeys--;
@@ -380,6 +517,11 @@ public class InternalNode extends Node {
         rightSibling.setParent(null);
     }
 
+    /**
+     * Returns the lower bound of the subtree.
+     * 
+     * @return The lower bound of the subtree.
+     */
     public int getSubtreeLB() {
         return this.children[0].getSubtreeLB();
     }
