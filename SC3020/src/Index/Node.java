@@ -7,6 +7,11 @@ import java.util.Arrays;
 
 // An abstract class necessary so that InternalNode and LeafNode can be
 // passed in as Node objects to the InternalNode constructor
+import java.util.Arrays;
+
+/**
+ * The abstract class representing a node in the index tree.
+ */
 public abstract class Node {
     protected int[] keys;
     protected int numKeys;
@@ -14,6 +19,11 @@ public abstract class Node {
     protected int nodeIndex;
     private int order; // max keys in a node + 1
 
+    /**
+     * Constructs a new Node object with the specified order.
+     *
+     * @param order the maximum number of keys in a node + 1
+     */
     public Node(int order) {
         this.order = order;
         this.parent = null;
@@ -22,50 +32,113 @@ public abstract class Node {
         Arrays.fill(this.keys, Integer.MAX_VALUE);
     }
 
+    /**
+     * Returns the keys in the node.
+     *
+     * @return the keys in the node
+     */
     public int[] getKeys() {
         return keys;
     }
 
+    /**
+     * Returns the number of keys in the node.
+     *
+     * @return the number of keys in the node
+     */
     public int getNumKeys() {
         return this.numKeys;
     }
 
+    /**
+     * Sets the number of keys in the node.
+     *
+     * @param numKeys the number of keys to set
+     */
     public void setNumKeys(int numKeys) {
         this.numKeys = numKeys;
     }
 
+    /**
+     * Returns the index of the node.
+     *
+     * @return the index of the node
+     */
     public int getNodeIndex() {
         return nodeIndex;
     }
 
+    /**
+     * Sets the index of the node.
+     *
+     * @param nodeIndex the index to set
+     */
     public void setNodeIndex(int nodeIndex) {
         this.nodeIndex = nodeIndex;
     }
 
+    /**
+     * Returns the key at the specified index.
+     *
+     * @param index the index of the key
+     * @return the key at the specified index
+     */
     public int getKey(int index) {
         return this.keys[index];
     }
 
+    /**
+     * Sets the key at the specified index.
+     *
+     * @param index the index of the key
+     * @param key   the key to set
+     */
     public void setKey(int index, int key) {
         this.keys[index] = key;
     }
 
+    /**
+     * Returns the order of the node.
+     *
+     * @return the order of the node
+     */
     public int getOrder() {
         return order;
     }
 
+    /**
+     * Returns the parent node.
+     *
+     * @return the parent node
+     */
     public InternalNode getParent() {
         return parent;
     }
 
+    /**
+     * Sets the parent node.
+     *
+     * @param parent the parent node to set
+     */
     public void setParent(InternalNode parent) {
         this.parent = parent;
     }
 
+    /**
+     * Checks if the node is full.
+     *
+     * @return true if the node is full, false otherwise
+     */
     public boolean isFull() {
         return this.numKeys == this.order - 1;
     }
 
+    /**
+     * Inserts a key-value pair into the node.
+     *
+     * @param key   the key to insert
+     * @param value the value to insert
+     */
     public void insert(int key, Address value) {
         if (this instanceof InternalNode) {
             Node child = this.findChild(key);
@@ -77,6 +150,12 @@ public abstract class Node {
         _this.addKey(key, value);
     }
 
+    /**
+     * Queries the node for a key and writes the result to the disk.
+     *
+     * @param key  the key to query
+     * @param disk the disk to write the result to
+     */
     public void query(int key, Disk disk) {
         int indexNodes = 0;
         boolean isRootLeaf = this instanceof LeafNode;
@@ -92,6 +171,13 @@ public abstract class Node {
         leaf.query(key, disk, (isRootLeaf ? 1 : indexNodes + 1));
     }
 
+    /**
+     * Performs a range query on the node and writes the result to the disk.
+     *
+     * @param startKey the starting key of the range
+     * @param endKey   the ending key of the range
+     * @param disk     the disk to write the result to
+     */
     public void rangeQuery(int startKey, int endKey, Disk disk) {
         int indexNodes = 0;
         boolean isRootLeaf = this instanceof LeafNode;
@@ -107,6 +193,13 @@ public abstract class Node {
         leaf.rangeQuery(startKey, endKey, disk, (isRootLeaf ? 1 : indexNodes + 1));
     }
 
+    /**
+     * Deletes a key from the node and updates the disk.
+     *
+     * @param key  the key to delete
+     * @param disk the disk to update
+     * @return true if the key was deleted, false otherwise
+     */
     public boolean delete(int key, Disk disk) {
         boolean deleted = false;
         if (this instanceof InternalNode) {
@@ -143,6 +236,12 @@ public abstract class Node {
         return _this.deleteKey(key, disk, null, null);
     }
 
+    /**
+     * Finds the child node that contains the specified key.
+     *
+     * @param key the key to find
+     * @return the child node that contains the key
+     */
     public Node findChild(int key) {
         InternalNode _this = (InternalNode) this;
         for (int i = 0; i < this.getNumKeys(); i++) {
@@ -153,6 +252,12 @@ public abstract class Node {
         return _this.getChild(this.getNumKeys());
     }
 
+    /**
+     * Performs a binary search to find the insertion position for a key.
+     *
+     * @param key the key to insert
+     * @return the insertion position for the key
+     */
     public int binarySearchInsertPos(int key) {
         int left = 0;
         int right = this.numKeys;
@@ -168,5 +273,10 @@ public abstract class Node {
         return left;
     }
 
+    /**
+     * Returns the lower bound of the subtree rooted at this node.
+     *
+     * @return the lower bound of the subtree
+     */
     public abstract int getSubtreeLB();
 }

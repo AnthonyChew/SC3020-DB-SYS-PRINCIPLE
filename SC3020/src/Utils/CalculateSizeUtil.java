@@ -1,6 +1,16 @@
 package Utils;
 
+/**
+ * The CalculateSizeUtil class provides a utility method to calculate the size
+ * in bytes of different data types.
+ */
 public class CalculateSizeUtil {
+    /**
+     * Calculates the size in bytes of the given object.
+     *
+     * @param obj the object for which the size needs to be calculated
+     * @return the size in bytes of the object
+     */
     public static int getSize(Object obj) {
         int size = 0;
         if (obj instanceof Byte) {
