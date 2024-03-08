@@ -10,8 +10,13 @@ Materials for submissions are stored in [Google Drive](https://drive.google.com/
 2. `java` added into enviromental path 
 
 # Execution instructions
-1. Navigate to folder /SC3020_portable
-2. For Windows:
-    * Run `SC3020_portable.bat`
-   For Linux/macOS:
-    * Run `sh SC3020_portable.sh`
+1. Navigate to folder `/SC3020_portable`
+2. Run the built `.jar` file by following the command below:
+   * For Windows system, run:
+        ```bash
+        SC3020_portable.bat
+        ```
+   * For Linux/macOS system, run:
+        ```bash
+        sh SC3020_portable.sh
+        ```
