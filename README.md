@@ -11,4 +11,7 @@ Materials for submissions are stored in [Google Drive](https://drive.google.com/
 
 # Execution instructions
 1. Navigate to folder /SC3020_portable
-2. Run SC3020_portable.bat
+2. For Windows:
+    * Run `SC3020_portable.bat`
+   For Linux/macOS:
+    * Run `sh SC3020_portable.sh`
